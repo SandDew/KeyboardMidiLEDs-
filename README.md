@@ -15,8 +15,8 @@ This is a Python application designed to help piano learners by providing a visu
 ## Gallery
 
 <div align="center">
-  <img src="images/1.jpg" alt="Keyboard with MIDI LEDs active" width="400" style="margin:10px;">
-  <img src="images/2.jpg" alt="Close-up of LED strip on keys" width="400" style="margin:10px;">
+  <img src="1.jpg" alt="Keyboard with MIDI LEDs active" width="400" style="margin:10px;">
+  <img src="2.jpg" alt="Close-up of LED strip on keys" width="400" style="margin:10px;">
 </div>
 
 ---
