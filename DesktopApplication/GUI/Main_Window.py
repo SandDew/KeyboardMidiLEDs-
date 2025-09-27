@@ -1,7 +1,7 @@
 import pygame
 import threading
 import time
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 import tkinter as tk
 import serial
 import sys
@@ -12,6 +12,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from Config import *
 from GUI.Visuals import SimpleButton, SimpleKeyboard, SimpleDropdown, SimpleSlider
+
+CLEAR_FLAG = 0x02  # New clear command (must match firmware)
 
 class MidiPlayerGUI:
     def __init__(self):
@@ -34,9 +36,10 @@ class MidiPlayerGUI:
         self.keyboard_height = KEYBOARD_HEIGHT
         self.keyboard_width = WINDOW_WIDTH - 2 * self.margin
 
-        # Speed options
-        self.speeds = [0.25, 0.5, 1.0, 1.5, 2.0, 3.0]
+        # Speed options - add Custom option
+        self.speeds = [0.25, 0.5, 1.0, 1.5, 2.0, 3.0, "Custom..."]
         self.speed_index = 2  # Default to 1.0x
+        self.custom_speed = None  # Track custom speed value
 
         # Buttons (centered at the top)
         self.buttons = []
@@ -57,7 +60,7 @@ class MidiPlayerGUI:
         slider_y = by + self.button_height + 18
         dropdown_menu_y = slider_y + 20  # Position below slider
         self.speed_dropdown = SimpleDropdown(
-            bx, by, 160, self.button_height, [f"{s}x" for s in self.speeds], self.font, 
+            bx, by, 160, self.button_height, self._get_speed_labels(), self.font, 
             self._on_speed_change, self.speed_index, dropdown_y_override=dropdown_menu_y
         )
 
@@ -115,10 +118,76 @@ class MidiPlayerGUI:
             self.ser = None
             print(f"Serial connection failed: {e}")
 
+    def _get_speed_labels(self):
+        """Get speed labels including custom speed if set."""
+        labels = []
+        for speed in self.speeds:
+            if speed == "Custom...":
+                if self.custom_speed is not None:
+                    labels.append(f"{self.custom_speed}x (Custom)")
+                else:
+                    labels.append("Custom...")
+            else:
+                labels.append(f"{speed}x")
+        return labels
+
+    def _prompt_custom_speed(self):
+        """Prompt user for custom speed input."""
+        root = tk.Tk()
+        root.withdraw()
+        
+        # Get current speed as default
+        current_speed = self.custom_speed if self.custom_speed is not None else self.speed
+        
+        try:
+            speed_str = simpledialog.askstring(
+                "Custom Speed", 
+                f"Enter playback speed (e.g., 0.6, 0.7, 1.3):",
+                initialvalue=str(current_speed)
+            )
+            
+            if speed_str:
+                try:
+                    custom_speed = float(speed_str)
+                    if 0.1 <= custom_speed <= 10.0:  # Reasonable speed limits
+                        return custom_speed
+                    else:
+                        print("Speed must be between 0.1 and 10.0")
+                except ValueError:
+                    print("Invalid speed value entered")
+        except Exception as e:
+            print(f"Error getting custom speed: {e}")
+        finally:
+            try:
+                root.destroy()
+            except:
+                pass  # Ignore errors if root is already destroyed
+        
+        return None
+
     def _on_speed_change(self, idx):
         old_speed = self.speed
-        self.speed_index = idx
-        self.speed = self.speeds[self.speed_index]
+        
+        # Check if Custom option was selected
+        if idx == len(self.speeds) - 1:  # "Custom..." is last item
+            custom_speed = self._prompt_custom_speed()
+            if custom_speed is not None:
+                self.custom_speed = custom_speed
+                self.speed = custom_speed
+                self.speed_index = idx
+                # Update dropdown to show custom speed
+                self.speed_dropdown.options = self._get_speed_labels()
+                self.speed_dropdown.selected_idx = idx
+            else:
+                # User cancelled or entered invalid value, revert to previous selection
+                return
+        else:
+            # Regular speed option selected
+            self.speed_index = idx
+            self.speed = self.speeds[self.speed_index]
+            self.custom_speed = None  # Clear custom speed when selecting preset
+            # Update dropdown options to remove custom speed display
+            self.speed_dropdown.options = self._get_speed_labels()
         
         # Adjust play_start_time to keep playhead position consistent when speed changes
         if self.playing and hasattr(self, 'play_start_time'):
@@ -139,32 +208,31 @@ class MidiPlayerGUI:
             self.keyboard.set_active(key_brightness)
             self.send_keys(key_brightness)
 
+    def send_clear(self, timeout=0.02, max_retries=5):
+        if not self.serial_connected or not self.ser:
+            return False
+        frame = bytearray([PACKET_START, 1, CLEAR_FLAG, 0, 0, PACKET_END])
+        for _ in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start = time.time()
+                while time.time() - start < timeout:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break
+                # retry
+            except:
+                break
+        return False
+
     def clear_keyboard(self):
-        """Clear all keyboard LEDs"""
-        if self.serial_connected and self.ser:
-            # Send all keys off command - send each key individually with 0 brightness
-            for key in range(NUM_KEYS):
-                frame = bytearray([PACKET_START, 1])  # Send one key at a time
-                frame.append(UPDATE_FLAG)
-                frame.append(key)
-                frame.append(0)  # Brightness 0
-                frame.append(PACKET_END)
-                
-                try:
-                    self.ser.write(frame)
-                    self.ser.flush()
-                    # Wait for acknowledgment
-                    start_time = time.time()
-                    while time.time() - start_time < 0.02:
-                        if self.ser.in_waiting:
-                            resp = self.ser.read(1)[0]
-                            if resp == READY_FLAG:
-                                break
-                        time.sleep(0.001)
-                except Exception as e:
-                    print(f"Error clearing key {key}: {e}")
-        
-        # Clear visual keyboard
+        """Use firmware clear command instead of per-key packets."""
+        if self.serial_connected:
+            self.send_clear()
         self.keyboard.set_active({})
 
     def select_midi(self):
@@ -177,6 +245,7 @@ class MidiPlayerGUI:
         root.destroy()
         if file_path:
             from MIDI_Parser import parse_midi_file
+
             try:
                 self.midi_file = file_path
                 self.note_times, self.midi_length = parse_midi_file(file_path)
@@ -189,13 +258,13 @@ class MidiPlayerGUI:
                     self.paused = False
                     if hasattr(self, 'play_start_time'):
                         delattr(self, 'play_start_time')
-                # Clear keys twice to ensure all LEDs are off
+                # Clear keys to ensure all LEDs are off
                 self.clear_keyboard()
-                self.clear_keyboard()
-                # Update keys/visuals to reflect new playhead (all off)
-                self.keyboard.set_active({})
             except Exception as e:
-                print(e)
+                print(f"Error loading MIDI file: {e}")
+                self.midi_file = None
+                self.note_times = None
+                self.midi_length = 0
 
     def toggle_playpause(self):
         if not self.note_times:
@@ -228,9 +297,11 @@ class MidiPlayerGUI:
             time.sleep(UPDATE_RATE)
 
     def send_keys(self, key_brightness_dict, timeout=0.02, max_retries=10):
-        """Send key data to serial device using the working protocol, retry immediately if not READY_FLAG"""
-        if not key_brightness_dict or not self.serial_connected:
+        """Send key data; if no changes, issue clear command."""
+        if not self.serial_connected:
             return False
+        if not key_brightness_dict:
+            return self.send_clear(timeout=timeout)
         
         count = len(key_brightness_dict)
         frame = bytearray([PACKET_START, count])
@@ -446,58 +517,6 @@ class MidiPlayerGUI:
 
                 # --- Update playhead position if playing ---
                 if self.playing and not self.paused and self.midi_length > 0:
-                    if hasattr(self, 'play_start_time'):
-                        current_time = (time.time() - self.play_start_time) * self.speed
-                        self.playhead = min(current_time, self.midi_length)
-                        if self.playhead >= self.midi_length:
-                            self.playing = False
-
-                # Update keyboard state
-                self.keyboard.set_active(self._get_active_keys())
-                self.keyboard.set_falling_notes(self._get_falling_notes())
-
-                # Keep slider synced when not dragging
-                if self.midi_length > 0 and not self.playhead_slider.dragging:
-                    self.playhead_slider.set_value(self.playhead / self.midi_length)
-
-                # Draw
-                self.screen.fill(BLACK)
-                self.keyboard.draw(self.screen)
-                self.playhead_slider.draw(self.screen)
-                for btn in self.buttons:
-                    btn.draw(self.screen)
-                self.speed_dropdown.draw(self.screen)
-
-                pygame.display.flip()
-                self.clock.tick(FPS)
-        finally:
-            # Clean up serial connection
-            if self.serial_connected and self.ser:
-                try:
-                    all_keys_off = {k: 0 for k in range(NUM_KEYS)}
-                    frame = bytearray([PACKET_START, len(all_keys_off)])
-                    for key, val in all_keys_off.items():
-                        frame.append(UPDATE_FLAG)
-                        frame.append(key)
-                        frame.append(0)
-                    frame.append(PACKET_END)
-                    self.ser.write(frame)
-                    self.ser.flush()
-                except:
-                    pass
-                self.ser.close()
-        try:
-            while self.running:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.running = False
-                    for btn in self.buttons:
-                        btn.handle_event(event)
-                    self.speed_dropdown.handle_event(event)
-                    self.playhead_slider.handle_event(event)
-
-                # --- Update playhead position if playing ---
-                if self.playing and not self.paused and self.midi_length > 0:
                     # Calculate playhead based on time and speed
                     if hasattr(self, 'play_start_time'):
                         current_time = (time.time() - self.play_start_time) * self.speed
@@ -526,19 +545,9 @@ class MidiPlayerGUI:
         finally:
             # Clean up serial connection
             if self.serial_connected and self.ser:
-                # Turn off all keys before disconnecting
                 try:
-                    all_keys_off = {k: 0 for k in range(NUM_KEYS)}
-                    frame = bytearray([PACKET_START, len(all_keys_off)])
-                    for key, val in all_keys_off.items():
-                        frame.append(UPDATE_FLAG)
-                        frame.append(key)
-                        frame.append(0)
-                    frame.append(PACKET_END)
-                    self.ser.write(frame)
-                    self.ser.flush()
+                    self.send_clear()
                 except:
                     pass
                 self.ser.close()
-
             pygame.quit()

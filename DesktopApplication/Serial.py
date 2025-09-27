@@ -2,6 +2,8 @@ import serial
 import time
 from Config import *
 
+CLEAR_FLAG = 0x02  # Must match firmware
+
 class KeyboardController:
     def __init__(self):
         self.ser = None
@@ -26,10 +28,34 @@ class KeyboardController:
             self.ser.close()
             self.connected = False
     
+    def send_clear(self, timeout=0.02, max_retries=5):
+        """Send clear command to serial device"""
+        if not self.connected:
+            return False
+        frame = bytearray([PACKET_START, 1, CLEAR_FLAG, 0, 0, PACKET_END])
+        for _ in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start = time.time()
+                while time.time() - start < timeout:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break
+                # retry
+            except:
+                break
+        return False
+
     def send_keys(self, key_brightness_dict, timeout=0.02, max_retries=10):
         """Send key data to serial device"""
-        if not key_brightness_dict or not self.connected:
+        if not self.connected:
             return False
+        if not key_brightness_dict:
+            return self.send_clear(timeout=timeout)
         
         count = len(key_brightness_dict)
         frame = bytearray([PACKET_START, count])
