@@ -1,0 +1,151 @@
+Loading failed for the <script> with source “https://epnt.ebay.com/static/epn-smart-tools.js”. MidiListing.aspx:31:73
+GET
+https://www.ipwnet.com/Styles/style.css
+[HTTP/3 404  44ms]
+
+GET
+https://www.ipwnet.com/Styles/Tabs.css
+[HTTP/3 404  39ms]
+
+GET
+https://www.ipwnet.com/midi/scripts/appconfig.js
+[HTTP/3 404  41ms]
+
+The resource at “<URL>” was blocked because Enhanced Tracking Protection is enabled. 2
+GET
+https://www.ipwnet.com/Styles/style.css
+[HTTP/3 404  35ms]
+
+GET
+https://www.ipwnet.com/Styles/Tabs.css
+[HTTP/3 404  33ms]
+
+Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content. node.js:409:1
+Loading failed for the <script> with source “https://cdn.popmyads.com/pma.js”. MidiListing.aspx:89:91
+Loading failed for the <script> with source “https://p397176.clksite.com/adServe/banners?tid=397176_780070_6”. MidiListing.aspx:99:117
+GET
+https://www.ipwnet.com/midi/scripts/appconfig.js
+[HTTP/3 404  34ms]
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://www.xadsmart.com/native.history.min.js. (Reason: CORS request did not succeed). Status code: (null).
+<script> source URI is not allowed in this document: “https://www.xadsmart.com/native.history.min.js”. MidiListing.aspx:1:1
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://d11enq2rymy0yl.cloudfront.net/Dropbox-sdk.min.js. (Reason: CORS request did not succeed). Status code: (null).
+<script> source URI is not allowed in this document: “https://d11enq2rymy0yl.cloudfront.net/Dropbox-sdk.min.js”. MidiListing.aspx:1:1
+Loading failed for the <script> with source “https://www.ipwnet.com/midi/scripts/appconfig.js”. MidiListing.aspx:146:65
+Feature Policy: Skipping unsupported feature name “accelerometer”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “autoplay”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “encrypted-media”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “gyroscope”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “picture-in-picture”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “accelerometer”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “autoplay”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “encrypted-media”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “gyroscope”. MidiListing.aspx
+Feature Policy: Skipping unsupported feature name “picture-in-picture”. MidiListing.aspx
+Facebook SDK is being shimmed by Firefox. See https://bugzilla.mozilla.org/show_bug.cgi?id=1226498 for details. shim_messaging_helper.js:23:15
+Cookie “_y” has been rejected for invalid domain. 3 MidiListing.aspx
+Cookie “_shopify_y” has been rejected for invalid domain. 3 MidiListing.aspx
+Cookie “_s” has been rejected for invalid domain. 3 MidiListing.aspx
+Cookie “_shopify_s” has been rejected for invalid domain. 3 MidiListing.aspx
+Uncaught TypeError: can't access property "value", document.getElementById(...) is null
+    ShopifyBuyInit https://www.ipwnet.com/midi/MidiListing.aspx line 382 > eval:1
+    loadScript https://www.ipwnet.com/midi/MidiListing.aspx line 382 > eval:1
+    <anonymous> https://www.ipwnet.com/midi/MidiListing.aspx line 382 > eval:1
+    <anonymous> https://www.ipwnet.com/midi/MidiListing.aspx line 382 > eval:1
+    <anonymous> https://www.ipwnet.com/midi/MidiListing.aspx:382
+MidiListing.aspx line 382 > eval:1:499
+GET
+https://www.ipwnet.com/favicon.ico
+[HTTP/3 404  0ms]
+
+Cookie “__Secure-YEC” has been rejected because it is in a cross-site context and its “SameSite” is “Lax” or “Strict”. kKCM4XDmxmA
+Cookie warnings 2
+Content-Security-Policy: Couldn’t process unknown directive ‘require-trusted-types-for’ kKCM4XDmxmA
+XHROPTIONS
+https://myidealproducts.myshopify.com/api/2025-01/graphql
+CORS Preflight Did Not Succeed
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://myidealproducts.myshopify.com/api/2025-01/graphql. (Reason: CORS preflight response did not succeed). Status code: 404.
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://myidealproducts.myshopify.com/api/2025-01/graphql. (Reason: CORS request did not succeed). Status code: (null).
+TypeError: NetworkError when attempting to fetch resource. buy-button-storefront.min.js:12:8009
+Partitioned cookie or storage access was provided to “https://www.youtube.com/embed/kKCM4XDmxmA” because it is loaded in the third-party context and dynamic state partitioning is enabled. <anonymous code>:7:27
+Cookie warnings 3
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at data:text/plain;base64,Cg==. (Reason: CORS request not http).
+Source map error: Error: URL constructor: <anonymous code> is not a valid URL.
+Stack in the worker:resolveSourceMapURL@resource://devtools/client/shared/source-map-loader/utils/fetchSourceMap.js:56:22
+getOriginalURLs@resource://devtools/client/shared/source-map-loader/source-map.js:74:24
+workerHandler/</<@resource://devtools/client/shared/worker-utils.js:115:52
+workerHandler/<@resource://devtools/client/shared/worker-utils.js:113:13
+
+Resource URL: <anonymous code>
+Source Map URL: null
+[MA4Fun MIDI] Batch button added. MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:36:17
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:21700
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:23863
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:27647
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:27712
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:27833
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:28021
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:28313
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js:1999:57006
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:57006
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:23863
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:21700
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval line 1999 > eval:1:90
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval line 1999 > eval line 1 > eval:1:90
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:27647
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:27712
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:27833
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:28021
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval:1999:28313
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval line 1999 > eval line 1 > eval:1:92
+unreachable code after return statement twhmyI8xAxK_ccp3SdCpqF6KB318H4Db0o9QznEN41c.js line 2 > eval line 1999 > eval line 1 > eval line 1 > eval:1:92
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:21700
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:23863
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:27647
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:27712
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:27833
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:28021
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:28313
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript:1465:57006
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:57006
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:23863
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:21700
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval line 1465 > eval:1:90
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval line 1465 > eval line 1 > eval:1:90
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:27647
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:27712
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:27833
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:28021
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval:1465:28313
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval line 1465 > eval line 1 > eval:1:92
+unreachable code after return statement kKCM4XDmxmA line 408 > injectedScript line 2 > eval line 1465 > eval line 1 > eval line 1 > eval:1:92
+Checked "A" - Found 199 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "B" - Found 199 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+[MA4Fun MIDI] Batch button added. MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:36:17
+Checked "C" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "D" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "E" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "F" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "G" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "H" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "I" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "J" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "K" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "L" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "M" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "N" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "O" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "P" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "Q" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "R" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "S" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "T" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "U" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "V" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "W" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "Y" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+Checked "Z" - Found 397 links MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:87:21
+All MIDI download links: 
+Array(596) [ "https://www.ma4fun.com/downloadfilerm.aspx?id=PBAYPNTQ", "https://www.ma4fun.com/downloadfilerm.aspx?id=MENYFOVH", "https://www.ma4fun.com/downloadfilerm.aspx?id=K9YHWH7Z", "https://www.ma4fun.com/downloadfilerm.aspx?id=ZHH1DSEW", "https://www.ma4fun.com/downloadfilerm.aspx?id=I1EPLHX0", "https://www.ma4fun.com/downloadfilerm.aspx?id=4A4SXKBW", "https://www.ma4fun.com/downloadfilerm.aspx?id=RLDBD6LD", "https://www.ma4fun.com/downloadfilerm.aspx?id=AKINCOLD", "https://www.ma4fun.com/downloadfilerm.aspx?id=FNWEETM6", "https://www.ma4fun.com/downloadfilerm.aspx?id=NOXLTRZC", … ]
+MA4Fun-MIDI-Batch-Downloader-Robust-Button.user.js:91:17

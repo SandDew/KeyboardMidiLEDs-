@@ -40,6 +40,9 @@ class MidiPlayerGUI:
         self.speeds = [0.25, 0.5, 1.0, 1.5, 2.0, 3.0, "Custom..."]
         self.speed_index = 2  # Default to 1.0x
         self.custom_speed = None  # Track custom speed value
+        
+        # Fade time (fixed)
+        self.fade_time = FADE_RANGE
 
         # Buttons (centered at the top)
         self.buttons = []
@@ -103,20 +106,50 @@ class MidiPlayerGUI:
         self.clock = pygame.time.Clock()
         self.update_thread = threading.Thread(target=self._update_loop, daemon=True)
         self.update_thread.start()
+        self.serial_monitor_thread = threading.Thread(target=self._serial_monitor_loop, daemon=True)
+        self.serial_monitor_thread.start()
 
     def _try_connect_serial(self):
         """Try to connect to serial device"""
-        try:
-            self.ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+        while not self.serial_connected:
+            self._connect_once()
+            if self.serial_connected:
+                break
             time.sleep(2)
-            self.ser.reset_input_buffer()
-            self.ser.reset_output_buffer()
+
+    def _connect_once(self):
+        """Single attempt to open the serial port without blocking forever."""
+        try:
+            ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+            time.sleep(2)
+            ser.reset_input_buffer()
+            ser.reset_output_buffer()
+            self.ser = ser
             self.serial_connected = True
             print(f"Connected to keyboard on {SERIAL_PORT}")
         except Exception as e:
-            self.serial_connected = False
-            self.ser = None
-            print(f"Serial connection failed: {e}")
+            self._handle_serial_error(e)
+
+    def _handle_serial_error(self, exc=None):
+        """Mark serial as disconnected and close the port safely."""
+        self.serial_connected = False
+        if self.ser:
+            try:
+                self.ser.close()
+            except Exception:
+                pass
+        self.ser = None
+        if exc:
+            print(f"Serial disconnected: {exc}")
+
+    def _serial_monitor_loop(self):
+        """Background loop to re-attempt connection whenever it is lost."""
+        while True:
+            if hasattr(self, "running") and not self.running:
+                break
+            if not self.serial_connected:
+                self._connect_once()
+            time.sleep(2)
 
     def _get_speed_labels(self):
         """Get speed labels including custom speed if set."""
@@ -225,7 +258,45 @@ class MidiPlayerGUI:
                         elif resp == ERROR_FLAG:
                             break
                 # retry
-            except:
+            except Exception as e:
+                self._handle_serial_error(e)
+                break
+        return False
+
+    def send_keys(self, key_brightness_dict, timeout=0.02, max_retries=10):
+        """Send key data; if no changes, issue clear command."""
+        if not self.serial_connected:
+            return False
+        if not key_brightness_dict:
+            return self.send_clear(timeout=timeout)
+        
+        count = len(key_brightness_dict)
+        frame = bytearray([PACKET_START, count])
+        for key, val in key_brightness_dict.items():
+            frame.append(UPDATE_FLAG)
+            frame.append(max(0, min(NUM_KEYS-1, int(key))))
+            # Convert brightness to 0-99 range for hardware
+            hardware_brightness = max(0, min(99, int(val * 99 / MAX_BRIGHTNESS)))
+            frame.append(hardware_brightness)
+        frame.append(PACKET_END)
+
+        for attempt in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start_time = time.time()
+                while True:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break  # immediately retry outer loop
+                    if time.time() - start_time > timeout:
+                        break  # immediately retry outer loop
+                    # No sleep here: tight retry
+            except Exception as e:
+                self._handle_serial_error(e)
                 break
         return False
 
@@ -294,43 +365,48 @@ class MidiPlayerGUI:
         while self.running:
             if self.playing and not self.paused and self.note_times:
                 self._update_playback()
+            elif self.playing and self.paused and self.note_times:
+                # When paused, continuously send current key states
+                key_brightness = self._get_current_key_states()
+                if self.serial_connected:
+                    self.send_keys(key_brightness)
             time.sleep(UPDATE_RATE)
 
-    def send_keys(self, key_brightness_dict, timeout=0.02, max_retries=10):
-        """Send key data; if no changes, issue clear command."""
-        if not self.serial_connected:
-            return False
-        if not key_brightness_dict:
-            return self.send_clear(timeout=timeout)
+    def _get_current_key_states(self):
+        """Get the current key brightness states at the current playhead position."""
+        if not self.note_times:
+            return {}
         
-        count = len(key_brightness_dict)
-        frame = bytearray([PACKET_START, count])
-        for key, val in key_brightness_dict.items():
-            frame.append(UPDATE_FLAG)
-            frame.append(max(0, min(NUM_KEYS-1, int(key))))
-            # Convert brightness to 0-99 range for hardware
-            hardware_brightness = max(0, min(99, int(val * 99 / MAX_BRIGHTNESS)))
-            frame.append(hardware_brightness)
-        frame.append(PACKET_END)
+        # First, get all upcoming note times to determine priority
+        upcoming_notes = self._get_upcoming_note_times()
+        
+        key_brightness = {}
+        for key in range(NUM_KEYS):
+            if key < len(self.note_times):
+                notes = self.note_times[key]
+                # Find the next note-on time for this key
+                next_note_on = None
+                for t_on, _ in notes:
+                    if t_on >= self.playhead:
+                        next_note_on = t_on
+                        break
 
-        for attempt in range(max_retries):
-            try:
-                self.ser.write(frame)
-                self.ser.flush()
-                start_time = time.time()
-                while True:
-                    if self.ser.in_waiting:
-                        resp = self.ser.read(1)[0]
-                        if resp == READY_FLAG:
-                            return True
-                        elif resp == ERROR_FLAG:
-                            break  # immediately retry outer loop
-                    if time.time() - start_time > timeout:
-                        break  # immediately retry outer loop
-                    # No sleep here: tight retry
-            except Exception:
-                break
-        return False
+                brightness = 0
+                # Calculate brightness based on current playhead position
+                if next_note_on is not None:
+                    dt = next_note_on - self.playhead
+                    if 0 < dt < self.fade_time:
+                        base_brightness = int(MAX_BRIGHTNESS * (1 - dt / self.fade_time))
+                        # Apply priority-based brightness reduction
+                        priority = self._get_note_priority(next_note_on, upcoming_notes)
+                        brightness = self._apply_priority_brightness(base_brightness, priority)
+                    elif abs(self.playhead - next_note_on) < UPDATE_RATE * 1.5:
+                        brightness = 0
+                
+                if brightness > 0:
+                    key_brightness[key] = brightness
+        
+        return key_brightness
 
     def _find_active_noteset_time(self, direction=1):
         """Find the next/previous set of notes (chord) time after/before current playhead."""
@@ -414,6 +490,9 @@ class MidiPlayerGUI:
             self.playing = False
             return
 
+        # Get all upcoming note times to determine priority
+        upcoming_notes = self._get_upcoming_note_times()
+
         key_brightness = {}
         keys_to_turn_off = set()
         for key in range(NUM_KEYS):
@@ -430,8 +509,11 @@ class MidiPlayerGUI:
                 # Fade in before note-on only
                 if next_note_on is not None:
                     dt = next_note_on - self.playhead
-                    if 0 < dt < FADE_RANGE:
-                        brightness = int(MAX_BRIGHTNESS * (1 - dt / FADE_RANGE))
+                    if 0 < dt < self.fade_time:
+                        base_brightness = int(MAX_BRIGHTNESS * (1 - dt / self.fade_time))
+                        # Apply priority-based brightness reduction
+                        priority = self._get_note_priority(next_note_on, upcoming_notes)
+                        brightness = self._apply_priority_brightness(base_brightness, priority)
                     # At the exact play time or after, turn off LED
                     if abs(self.playhead - next_note_on) < UPDATE_RATE * 1.5 or self.playhead > next_note_on:
                         brightness = 0
@@ -447,20 +529,77 @@ class MidiPlayerGUI:
 
         if self.serial_connected:
             self.send_keys(key_brightness)
+            
+            # Send multiple turn-off commands for keys that should be off
+            if keys_to_turn_off:
+                for i in range(4):  # Send 4 additional times
+                    time.sleep(0.005)  # Small delay between commands
+                    turn_off_dict = {key: 0 for key in keys_to_turn_off}
+                    self.send_keys(turn_off_dict)
 
     def _get_active_keys(self):
-        """Get currently active keys for overlays (unchanged)."""
+        """Get currently active keys for overlays with priority-based brightness."""
         if not self.note_times:
             return {}
+        
+        # Get all upcoming note times to determine priority
+        upcoming_notes = []
+        max_lookahead = self.playhead + UPDATE_RATE * 1.5
+        upcoming_times = set()
+        
+        for key in range(NUM_KEYS):
+            if key < len(self.note_times):
+                for start_time, _ in self.note_times[key]:
+                    if self.playhead <= start_time <= max_lookahead:
+                        upcoming_times.add(start_time)
+        
+        upcoming_notes = sorted(upcoming_times)
+        
         active = {}
         for key in range(NUM_KEYS):
             if key < len(self.note_times):
                 notes = self.note_times[key]
                 for t_on, t_off in notes:
                     if abs(self.playhead - t_on) < UPDATE_RATE * 1.5:
-                        active[key] = MAX_BRIGHTNESS
+                        base_brightness = MAX_BRIGHTNESS
+                        # Apply priority-based brightness reduction
+                        priority = self._get_note_priority(t_on, upcoming_notes)
+                        brightness = self._apply_priority_brightness(base_brightness, priority)
+                        active[key] = brightness
                         break
         return active
+
+    def _get_upcoming_note_times(self):
+        """Get all upcoming note start times within the fade range, sorted by time."""
+        if not self.note_times:
+            return []
+        
+        upcoming_times = set()
+        max_lookahead = self.playhead + self.fade_time
+        
+        for key in range(NUM_KEYS):
+            if key < len(self.note_times):
+                for start_time, _ in self.note_times[key]:
+                    if self.playhead <= start_time <= max_lookahead:
+                        upcoming_times.add(start_time)
+        
+        return sorted(upcoming_times)
+    
+    def _get_note_priority(self, note_time, upcoming_notes):
+        """Get the priority of a note (0 = immediate next, 1 = second next, etc.)"""
+        try:
+            return upcoming_notes.index(note_time)
+        except ValueError:
+            return 0  # Default to highest priority if not found
+    
+    def _apply_priority_brightness(self, base_brightness, priority):
+        """Apply brightness reduction based on note priority."""
+        if priority == 0:
+            # Immediate next notes get full brightness
+            return base_brightness
+        else:
+            # Second and subsequent notes get quarter brightness
+            return base_brightness // 4
 
     def _get_falling_notes(self):
         """Return a list of falling notes for visualization."""
@@ -536,6 +675,7 @@ class MidiPlayerGUI:
                 self.screen.fill(BLACK)
                 self.keyboard.draw(self.screen)
                 self.playhead_slider.draw(self.screen)
+                
                 for btn in self.buttons:
                     btn.draw(self.screen)
                 self.speed_dropdown.draw(self.screen)
@@ -550,4 +690,5 @@ class MidiPlayerGUI:
                 except:
                     pass
                 self.ser.close()
+            pygame.quit()
             pygame.quit()

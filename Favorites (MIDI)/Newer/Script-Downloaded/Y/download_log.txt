@@ -1,0 +1,254 @@
+2025-10-11 22:52:36,682 - INFO - Found 48 links to process
+2025-10-11 22:52:38,474 - INFO - Chrome WebDriver initialized successfully
+2025-10-11 22:52:38,474 - INFO - Starting download of 48 files...
+2025-10-11 22:52:38,474 - INFO - Download folder: C:\Users\Dewy\Desktop\Scraped_MIDIs\Y
+2025-10-11 22:52:38,475 - INFO - Processing 1/48: https://www.ma4fun.com/downloadfilerm.aspx?id=4OW2Q6NB
+2025-10-11 22:52:38,475 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=4OW2Q6NB (attempt 1)
+2025-10-11 22:52:43,666 - INFO - Download button enabled
+2025-10-11 22:52:43,751 - INFO - Download button clicked
+2025-10-11 22:52:45,757 - INFO - Download completed successfully
+2025-10-11 22:52:46,258 - INFO - Processing 2/48: https://www.ma4fun.com/downloadfilerm.aspx?id=ANJXNWVE
+2025-10-11 22:52:46,258 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=ANJXNWVE (attempt 1)
+2025-10-11 22:52:49,161 - INFO - Download button enabled
+2025-10-11 22:52:49,229 - INFO - Download button clicked
+2025-10-11 22:52:50,232 - INFO - Download completed successfully
+2025-10-11 22:52:50,733 - INFO - Processing 3/48: https://www.ma4fun.com/downloadfilerm.aspx?id=VD8VUKKZ
+2025-10-11 22:52:50,734 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=VD8VUKKZ (attempt 1)
+2025-10-11 22:52:53,696 - INFO - Download button enabled
+2025-10-11 22:52:53,755 - INFO - Download button clicked
+2025-10-11 22:52:54,757 - INFO - Download completed successfully
+2025-10-11 22:52:55,258 - INFO - Processing 4/48: https://www.ma4fun.com/downloadfilerm.aspx?id=DBJQMHMW
+2025-10-11 22:52:55,259 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=DBJQMHMW (attempt 1)
+2025-10-11 22:52:58,191 - INFO - Download button enabled
+2025-10-11 22:52:58,798 - INFO - Download button clicked
+2025-10-11 22:52:58,799 - INFO - Download completed successfully
+2025-10-11 22:52:59,299 - INFO - Processing 5/48: https://www.ma4fun.com/downloadfilerm.aspx?id=HIBI16DV
+2025-10-11 22:52:59,300 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=HIBI16DV (attempt 1)
+2025-10-11 22:53:04,243 - INFO - Download button enabled
+2025-10-11 22:53:04,298 - INFO - Download button clicked
+2025-10-11 22:53:05,301 - INFO - Download completed successfully
+2025-10-11 22:53:05,801 - INFO - Processing 6/48: https://www.ma4fun.com/downloadfilerm.aspx?id=IXDLP3VX
+2025-10-11 22:53:05,802 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=IXDLP3VX (attempt 1)
+2025-10-11 22:53:10,119 - INFO - Download button enabled
+2025-10-11 22:53:10,175 - INFO - Download button clicked
+2025-10-11 22:53:11,678 - INFO - Download completed successfully
+2025-10-11 22:53:12,179 - INFO - Processing 7/48: https://www.ma4fun.com/downloadfilerm.aspx?id=NWPOBLUJ
+2025-10-11 22:53:12,179 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=NWPOBLUJ (attempt 1)
+2025-10-11 22:53:16,798 - INFO - Download button enabled
+2025-10-11 22:53:16,851 - INFO - Download button clicked
+2025-10-11 22:53:17,854 - INFO - Download completed successfully
+2025-10-11 22:53:18,355 - INFO - Processing 8/48: https://www.ma4fun.com/downloadfilerm.aspx?id=AUY6XKYJ
+2025-10-11 22:53:18,356 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=AUY6XKYJ (attempt 1)
+2025-10-11 22:53:23,239 - INFO - Download button enabled
+2025-10-11 22:53:23,294 - INFO - Download button clicked
+2025-10-11 22:53:24,297 - INFO - Download completed successfully
+2025-10-11 22:53:24,798 - INFO - Processing 9/48: https://www.ma4fun.com/downloadfilerm.aspx?id=H683CEBI
+2025-10-11 22:53:24,798 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=H683CEBI (attempt 1)
+2025-10-11 22:53:29,392 - INFO - Download button enabled
+2025-10-11 22:53:29,447 - INFO - Download button clicked
+2025-10-11 22:53:30,450 - INFO - Download completed successfully
+2025-10-11 22:53:30,951 - INFO - Processing 10/48: https://www.ma4fun.com/downloadfilerm.aspx?id=6NCDMYSN
+2025-10-11 22:53:30,952 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=6NCDMYSN (attempt 1)
+2025-10-11 22:53:35,689 - INFO - Download button enabled
+2025-10-11 22:53:35,743 - INFO - Download button clicked
+2025-10-11 22:53:36,746 - INFO - Download completed successfully
+2025-10-11 22:53:37,247 - INFO - Processing 11/48: https://www.ma4fun.com/downloadfilerm.aspx?id=UXVPKFF1
+2025-10-11 22:53:37,248 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=UXVPKFF1 (attempt 1)
+2025-10-11 22:53:41,742 - INFO - Download button enabled
+2025-10-11 22:53:41,800 - INFO - Download button clicked
+2025-10-11 22:53:42,803 - INFO - Download completed successfully
+2025-10-11 22:53:43,303 - INFO - Processing 12/48: https://www.ma4fun.com/downloadfilerm.aspx?id=NM938SET
+2025-10-11 22:53:43,303 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=NM938SET (attempt 1)
+2025-10-11 22:53:47,855 - INFO - Download button enabled
+2025-10-11 22:53:47,915 - INFO - Download button clicked
+2025-10-11 22:53:48,918 - INFO - Download completed successfully
+2025-10-11 22:53:49,419 - INFO - Processing 13/48: https://www.ma4fun.com/downloadfilerm.aspx?id=NPLMZFRR
+2025-10-11 22:53:49,419 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=NPLMZFRR (attempt 1)
+2025-10-11 22:53:54,523 - INFO - Download button enabled
+2025-10-11 22:53:54,578 - INFO - Download button clicked
+2025-10-11 22:53:55,581 - INFO - Download completed successfully
+2025-10-11 22:53:56,082 - INFO - Processing 14/48: https://www.ma4fun.com/downloadfilerm.aspx?id=GLZSPQLW
+2025-10-11 22:53:56,083 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=GLZSPQLW (attempt 1)
+2025-10-11 22:54:00,305 - INFO - Download button enabled
+2025-10-11 22:54:00,362 - INFO - Download button clicked
+2025-10-11 22:54:01,867 - INFO - Download completed successfully
+2025-10-11 22:54:02,367 - INFO - Processing 15/48: https://www.ma4fun.com/downloadfilerm.aspx?id=XHXZL4WW
+2025-10-11 22:54:02,368 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=XHXZL4WW (attempt 1)
+2025-10-11 22:54:17,052 - INFO - Download button enabled
+2025-10-11 22:54:17,108 - INFO - Download button clicked
+2025-10-11 22:54:18,611 - INFO - Download completed successfully
+2025-10-11 22:54:19,112 - INFO - Processing 16/48: https://www.ma4fun.com/downloadfilerm.aspx?id=LMM2BVBU
+2025-10-11 22:54:19,113 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=LMM2BVBU (attempt 1)
+2025-10-11 22:54:24,363 - INFO - Download button enabled
+2025-10-11 22:54:24,414 - INFO - Download button clicked
+2025-10-11 22:54:25,417 - INFO - Download completed successfully
+2025-10-11 22:54:25,918 - INFO - Processing 17/48: https://www.ma4fun.com/downloadfilerm.aspx?id=ZU5JOFDS
+2025-10-11 22:54:25,918 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=ZU5JOFDS (attempt 1)
+2025-10-11 22:54:38,617 - INFO - Download button enabled
+2025-10-11 22:54:38,677 - INFO - Download button clicked
+2025-10-11 22:54:39,681 - INFO - Download completed successfully
+2025-10-11 22:54:40,183 - INFO - Processing 18/48: https://www.ma4fun.com/downloadfilerm.aspx?id=AEYCS3RW
+2025-10-11 22:54:40,184 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=AEYCS3RW (attempt 1)
+2025-10-11 22:54:45,012 - INFO - Download button enabled
+2025-10-11 22:54:45,068 - INFO - Download button clicked
+2025-10-11 22:54:46,071 - INFO - Download completed successfully
+2025-10-11 22:54:46,572 - INFO - Processing 19/48: https://www.ma4fun.com/downloadfilerm.aspx?id=QFJKBHRT
+2025-10-11 22:54:46,572 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=QFJKBHRT (attempt 1)
+2025-10-11 22:54:52,876 - INFO - Download button enabled
+2025-10-11 22:54:52,930 - INFO - Download button clicked
+2025-10-11 22:54:53,934 - INFO - Download completed successfully
+2025-10-11 22:54:54,436 - INFO - Processing 20/48: https://www.ma4fun.com/downloadfilerm.aspx?id=5FYIZVDQ
+2025-10-11 22:54:54,436 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=5FYIZVDQ (attempt 1)
+2025-10-11 22:55:07,441 - INFO - Download button enabled
+2025-10-11 22:55:07,496 - INFO - Download button clicked
+2025-10-11 22:55:08,499 - INFO - Download completed successfully
+2025-10-11 22:55:09,000 - INFO - Processing 21/48: https://www.ma4fun.com/downloadfilerm.aspx?id=VM2KBIMA
+2025-10-11 22:55:09,001 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=VM2KBIMA (attempt 1)
+2025-10-11 22:55:14,025 - INFO - Download button enabled
+2025-10-11 22:55:14,078 - INFO - Download button clicked
+2025-10-11 22:55:15,081 - INFO - Download completed successfully
+2025-10-11 22:55:15,581 - INFO - Processing 22/48: https://www.ma4fun.com/downloadfilerm.aspx?id=T9CWV1KU
+2025-10-11 22:55:15,582 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=T9CWV1KU (attempt 1)
+2025-10-11 22:55:19,891 - INFO - Download button enabled
+2025-10-11 22:55:19,948 - INFO - Download button clicked
+2025-10-11 22:55:20,951 - INFO - Download completed successfully
+2025-10-11 22:55:21,451 - INFO - Processing 23/48: https://www.ma4fun.com/downloadfilerm.aspx?id=YT4ZJUQS
+2025-10-11 22:55:21,452 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=YT4ZJUQS (attempt 1)
+2025-10-11 22:55:26,276 - INFO - Download button enabled
+2025-10-11 22:55:26,330 - INFO - Download button clicked
+2025-10-11 22:55:27,334 - INFO - Download completed successfully
+2025-10-11 22:55:27,834 - INFO - Processing 24/48: https://www.ma4fun.com/downloadfilerm.aspx?id=6ZWA6EKP
+2025-10-11 22:55:27,835 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=6ZWA6EKP (attempt 1)
+2025-10-11 22:55:32,762 - INFO - Download button enabled
+2025-10-11 22:55:32,820 - INFO - Download button clicked
+2025-10-11 22:55:33,824 - INFO - Download completed successfully
+2025-10-11 22:55:34,325 - INFO - Processing 25/48: https://www.ma4fun.com/downloadfilerm.aspx?id=DZYGNO14
+2025-10-11 22:55:34,325 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=DZYGNO14 (attempt 1)
+2025-10-11 22:55:38,513 - INFO - Download button enabled
+2025-10-11 22:55:38,572 - INFO - Download button clicked
+2025-10-11 22:55:39,576 - INFO - Download completed successfully
+2025-10-11 22:55:40,076 - INFO - Processing 26/48: https://www.ma4fun.com/downloadfilerm.aspx?id=SQYQBUOO
+2025-10-11 22:55:40,077 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=SQYQBUOO (attempt 1)
+2025-10-11 22:55:46,567 - INFO - Download button enabled
+2025-10-11 22:55:46,622 - INFO - Download button clicked
+2025-10-11 22:55:47,625 - INFO - Download completed successfully
+2025-10-11 22:55:48,125 - INFO - Processing 27/48: https://www.ma4fun.com/downloadfilerm.aspx?id=GKMKL5GP
+2025-10-11 22:55:48,126 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=GKMKL5GP (attempt 1)
+2025-10-11 22:55:53,082 - INFO - Download button enabled
+2025-10-11 22:55:53,133 - INFO - Download button clicked
+2025-10-11 22:55:54,137 - INFO - Download completed successfully
+2025-10-11 22:55:54,638 - INFO - Processing 28/48: https://www.ma4fun.com/downloadfilerm.aspx?id=PV8ZFUUG
+2025-10-11 22:55:54,638 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=PV8ZFUUG (attempt 1)
+2025-10-11 22:55:58,903 - INFO - Download button enabled
+2025-10-11 22:55:58,959 - INFO - Download button clicked
+2025-10-11 22:55:59,962 - INFO - Download completed successfully
+2025-10-11 22:56:00,463 - INFO - Processing 29/48: https://www.ma4fun.com/downloadfilerm.aspx?id=EFSODTMP
+2025-10-11 22:56:00,464 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=EFSODTMP (attempt 1)
+2025-10-11 22:56:13,831 - INFO - Download button enabled
+2025-10-11 22:56:13,883 - INFO - Download button clicked
+2025-10-11 22:56:14,887 - INFO - Download completed successfully
+2025-10-11 22:56:15,388 - INFO - Processing 30/48: https://www.ma4fun.com/downloadfilerm.aspx?id=2J2OUAF1
+2025-10-11 22:56:15,389 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=2J2OUAF1 (attempt 1)
+2025-10-11 22:56:20,323 - INFO - Download button enabled
+2025-10-11 22:56:20,380 - INFO - Download button clicked
+2025-10-11 22:56:21,384 - INFO - Download completed successfully
+2025-10-11 22:56:21,885 - INFO - Processing 31/48: https://www.ma4fun.com/downloadfilerm.aspx?id=ARVHBFBF
+2025-10-11 22:56:21,885 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=ARVHBFBF (attempt 1)
+2025-10-11 22:56:27,640 - INFO - Download button enabled
+2025-10-11 22:56:27,696 - INFO - Download button clicked
+2025-10-11 22:56:28,700 - INFO - Download completed successfully
+2025-10-11 22:56:29,201 - INFO - Processing 32/48: https://www.ma4fun.com/downloadfilerm.aspx?id=TBKQ3MLN
+2025-10-11 22:56:29,202 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=TBKQ3MLN (attempt 1)
+2025-10-11 22:56:34,008 - INFO - Download button enabled
+2025-10-11 22:56:34,060 - INFO - Download button clicked
+2025-10-11 22:56:35,064 - INFO - Download completed successfully
+2025-10-11 22:56:35,565 - INFO - Processing 33/48: https://www.ma4fun.com/downloadfilerm.aspx?id=DCE1P4XR
+2025-10-11 22:56:35,566 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=DCE1P4XR (attempt 1)
+2025-10-11 22:56:47,958 - INFO - Download button enabled
+2025-10-11 22:56:48,012 - INFO - Download button clicked
+2025-10-11 22:56:49,016 - INFO - Download completed successfully
+2025-10-11 22:56:49,517 - INFO - Processing 34/48: https://www.ma4fun.com/downloadfilerm.aspx?id=TDEPJYEU
+2025-10-11 22:56:49,518 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=TDEPJYEU (attempt 1)
+2025-10-11 22:57:02,892 - INFO - Download button enabled
+2025-10-11 22:57:02,945 - INFO - Download button clicked
+2025-10-11 22:57:03,949 - INFO - Download completed successfully
+2025-10-11 22:57:04,449 - INFO - Processing 35/48: https://www.ma4fun.com/downloadfilerm.aspx?id=S4GX73DJ
+2025-10-11 22:57:04,450 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=S4GX73DJ (attempt 1)
+2025-10-11 22:57:09,351 - INFO - Download button enabled
+2025-10-11 22:57:09,406 - INFO - Download button clicked
+2025-10-11 22:57:10,411 - INFO - Download completed successfully
+2025-10-11 22:57:10,912 - INFO - Processing 36/48: https://www.ma4fun.com/downloadfilerm.aspx?id=AZPYZHKC
+2025-10-11 22:57:10,912 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=AZPYZHKC (attempt 1)
+2025-10-11 22:57:15,751 - INFO - Download button enabled
+2025-10-11 22:57:15,804 - INFO - Download button clicked
+2025-10-11 22:57:16,808 - INFO - Download completed successfully
+2025-10-11 22:57:17,309 - INFO - Processing 37/48: https://www.ma4fun.com/downloadfilerm.aspx?id=P6SICHT4
+2025-10-11 22:57:17,309 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=P6SICHT4 (attempt 1)
+2025-10-11 22:57:21,855 - INFO - Download button enabled
+2025-10-11 22:57:21,912 - INFO - Download button clicked
+2025-10-11 22:57:23,418 - INFO - Download completed successfully
+2025-10-11 22:57:23,919 - INFO - Processing 38/48: https://www.ma4fun.com/downloadfilerm.aspx?id=FMXIN14C
+2025-10-11 22:57:23,919 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=FMXIN14C (attempt 1)
+2025-10-11 22:57:28,265 - INFO - Download button enabled
+2025-10-11 22:57:28,419 - INFO - Download button clicked
+2025-10-11 22:57:29,424 - INFO - Download completed successfully
+2025-10-11 22:57:29,926 - INFO - Processing 39/48: https://www.ma4fun.com/downloadfilerm.aspx?id=2QFQJKGU
+2025-10-11 22:57:29,926 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=2QFQJKGU (attempt 1)
+2025-10-11 22:57:34,693 - INFO - Download button enabled
+2025-10-11 22:57:34,753 - INFO - Download button clicked
+2025-10-11 22:57:36,260 - INFO - Download completed successfully
+2025-10-11 22:57:36,761 - INFO - Processing 40/48: https://www.ma4fun.com/downloadfilerm.aspx?id=U2I6HEUN
+2025-10-11 22:57:36,761 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=U2I6HEUN (attempt 1)
+2025-10-11 22:57:41,114 - INFO - Download button enabled
+2025-10-11 22:57:41,173 - INFO - Download button clicked
+2025-10-11 22:57:42,177 - INFO - Download completed successfully
+2025-10-11 22:57:42,677 - INFO - Processing 41/48: https://www.ma4fun.com/downloadfilerm.aspx?id=I1EU3EYK
+2025-10-11 22:57:42,678 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=I1EU3EYK (attempt 1)
+2025-10-11 22:57:47,063 - INFO - Download button enabled
+2025-10-11 22:57:47,120 - INFO - Download button clicked
+2025-10-11 22:57:48,124 - INFO - Download completed successfully
+2025-10-11 22:57:48,625 - INFO - Processing 42/48: https://www.ma4fun.com/downloadfilerm.aspx?id=D87GACFV
+2025-10-11 22:57:48,625 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=D87GACFV (attempt 1)
+2025-10-11 22:57:53,614 - INFO - Download button enabled
+2025-10-11 22:57:54,178 - INFO - Download button clicked
+2025-10-11 22:57:54,179 - INFO - Download completed successfully
+2025-10-11 22:57:54,680 - INFO - Processing 43/48: https://www.ma4fun.com/downloadfilerm.aspx?id=I2RZA2V7
+2025-10-11 22:57:54,681 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=I2RZA2V7 (attempt 1)
+2025-10-11 22:57:57,637 - INFO - Download button enabled
+2025-10-11 22:57:57,712 - INFO - Download button clicked
+2025-10-11 22:57:58,716 - INFO - Download completed successfully
+2025-10-11 22:57:59,217 - INFO - Processing 44/48: https://www.ma4fun.com/downloadfilerm.aspx?id=V7UFQCQW
+2025-10-11 22:57:59,217 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=V7UFQCQW (attempt 1)
+2025-10-11 22:58:02,264 - INFO - Download button enabled
+2025-10-11 22:58:02,338 - INFO - Download button clicked
+2025-10-11 22:58:03,342 - INFO - Download completed successfully
+2025-10-11 22:58:03,843 - INFO - Processing 45/48: https://www.ma4fun.com/downloadfilerm.aspx?id=1ABYUXKJ
+2025-10-11 22:58:03,844 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=1ABYUXKJ (attempt 1)
+2025-10-11 22:58:06,782 - INFO - Download button enabled
+2025-10-11 22:58:06,853 - INFO - Download button clicked
+2025-10-11 22:58:07,858 - INFO - Download completed successfully
+2025-10-11 22:58:08,359 - INFO - Processing 46/48: https://www.ma4fun.com/downloadfilerm.aspx?id=ONVWEAJ0
+2025-10-11 22:58:08,359 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=ONVWEAJ0 (attempt 1)
+2025-10-11 22:58:11,496 - INFO - Download button enabled
+2025-10-11 22:58:11,580 - INFO - Download button clicked
+2025-10-11 22:58:12,585 - INFO - Download completed successfully
+2025-10-11 22:58:13,086 - INFO - Processing 47/48: https://www.ma4fun.com/downloadfilerm.aspx?id=KXMJFRMR
+2025-10-11 22:58:13,086 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=KXMJFRMR (attempt 1)
+2025-10-11 22:58:16,152 - INFO - Download button enabled
+2025-10-11 22:58:16,220 - INFO - Download button clicked
+2025-10-11 22:58:17,226 - INFO - Download completed successfully
+2025-10-11 22:58:17,727 - INFO - Processing 48/48: https://www.ma4fun.com/downloadfilerm.aspx?id=VIHIUHUJ
+2025-10-11 22:58:17,727 - INFO - Attempting to download from: https://www.ma4fun.com/downloadfilerm.aspx?id=VIHIUHUJ (attempt 1)
+2025-10-11 22:58:28,834 - INFO - Download button enabled
+2025-10-11 22:58:28,904 - INFO - Download button clicked
+2025-10-11 22:58:29,909 - INFO - Download completed successfully
+2025-10-11 22:58:29,909 - INFO - 
+==================================================
+2025-10-11 22:58:29,909 - INFO - DOWNLOAD SUMMARY
+2025-10-11 22:58:29,910 - INFO - ==================================================
+2025-10-11 22:58:29,910 - INFO - Total links processed: 48
+2025-10-11 22:58:29,910 - INFO - Successful downloads: 48
+2025-10-11 22:58:29,910 - INFO - Failed downloads: 0
+2025-10-11 22:58:29,910 - INFO - Total time: 351.44 seconds
+2025-10-11 22:58:29,910 - INFO - Average time per file: 7.32 seconds
+2025-10-11 22:58:32,438 - INFO - WebDriver closed
