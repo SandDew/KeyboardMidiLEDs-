@@ -1,1 +1,5 @@
 NewAttempt/
+__pycache__/
+*.pyc
+*.pyo
+led_config.json
