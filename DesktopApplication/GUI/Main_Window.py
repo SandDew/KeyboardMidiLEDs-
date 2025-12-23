@@ -12,14 +12,21 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from Config import *
 from GUI.Visuals import SimpleButton, SimpleKeyboard, SimpleDropdown, SimpleSlider
+from GUI.ConfigMode import ConfigModeWindow
+from KeyboardConfig import KeyboardConfig
 
 CLEAR_FLAG = 0x02  # New clear command (must match firmware)
+CONFIG_FLAG = 0x03  # Configuration command flag
 
 class MidiPlayerGUI:
     def __init__(self, initial_state=None):
         pygame.init()
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Keyboard MIDI LED Player (Reworked)")
+
+        # Load keyboard configuration
+        self.keyboard_config = KeyboardConfig()
+        self.keyboard_config.load()  # Load from file if exists
 
         # Serial connection
         self.ser = None
@@ -46,7 +53,7 @@ class MidiPlayerGUI:
 
         # Buttons (centered at the top)
         self.buttons = []
-        total_width = self.button_width + self.button_height + 10 + 160 + 10 + 120  # Added space for clear button
+        total_width = self.button_width + self.button_height + 10 + 160 + 10 + 120 + 10 + 120  # Added space for config button
         bx = (WINDOW_WIDTH - total_width) // 2
         by = self.margin
         self.buttons.append(SimpleButton(
@@ -72,8 +79,13 @@ class MidiPlayerGUI:
         self.buttons.append(SimpleButton(
             bx, by, 120, self.button_height, "Clear Keys", self.font, self.clear_keyboard))
 
+        # Configuration button
+        bx += 130
+        self.buttons.append(SimpleButton(
+            bx, by, 120, self.button_height, "Config LEDs", self.font, self.open_config_mode))
+
         # Add skip buttons with symbols for compactness
-        bx_skip = bx + 140  # after clear button
+        bx_skip = bx + 130  # after config button
         self.buttons.append(SimpleButton(
             bx_skip, by, 40, self.button_height, "⏮", self.font, self.skip_back))
         bx_skip += 50
@@ -132,6 +144,8 @@ class MidiPlayerGUI:
             self.ser = ser
             self.serial_connected = True
             print(f"Connected to keyboard on {SERIAL_PORT}")
+            # Send configuration to Arduino after connecting
+            self.send_config_to_arduino()
         except Exception as e:
             self._handle_serial_error(e)
 
@@ -310,6 +324,78 @@ class MidiPlayerGUI:
         if self.serial_connected:
             self.send_clear()
         self.keyboard.set_active({})
+
+    def open_config_mode(self):
+        """Open the LED configuration mode window"""
+        # Pause playback if playing
+        was_playing = self.playing
+        if self.playing:
+            self.playing = False
+            self.paused = True
+        
+        # Clear LEDs before entering config mode
+        self.clear_keyboard()
+        
+        # Open configuration window
+        config_window = ConfigModeWindow(self.keyboard_config)
+        saved = config_window.run(self.screen)
+        
+        # If configuration was saved, send it to Arduino
+        if saved:
+            self.send_config_to_arduino()
+        
+        # Resume playback if it was playing before
+        if was_playing:
+            self.playing = True
+            self.paused = False
+            self.play_start_time = time.time() - (self.playhead / self.speed)
+
+    def send_config_to_arduino(self, timeout=0.1, max_retries=5):
+        """Send LED configuration to Arduino"""
+        if not self.serial_connected or not self.ser:
+            print("Cannot send config: not connected to Arduino")
+            return False
+        
+        # Get single and triple LED keys from config
+        single_led_keys = self.keyboard_config.get_single_led_keys()
+        triple_led_keys = self.keyboard_config.get_triple_led_keys()
+        
+        # Build config packet
+        # Format: [START, CONFIG_FLAG, count_single, single_keys..., count_triple, triple_keys..., END]
+        frame = bytearray([PACKET_START, CONFIG_FLAG])
+        frame.append(len(single_led_keys))
+        for key in single_led_keys:
+            frame.append(key)
+        frame.append(len(triple_led_keys))
+        for key in triple_led_keys:
+            frame.append(key)
+        frame.append(PACKET_END)
+        
+        for attempt in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start_time = time.time()
+                while True:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            print("Configuration sent successfully to Arduino")
+                            return True
+                        elif resp == ERROR_FLAG:
+                            print(f"Arduino returned error for config (attempt {attempt + 1})")
+                            break
+                    if time.time() - start_time > timeout:
+                        print(f"Timeout waiting for config response (attempt {attempt + 1})")
+                        break
+                    time.sleep(0.001)
+            except Exception as e:
+                print(f"Error sending config to Arduino: {e}")
+                self._handle_serial_error(e)
+                break
+        
+        print("Failed to send configuration to Arduino")
+        return False
 
     def select_midi(self):
         root = tk.Tk()
