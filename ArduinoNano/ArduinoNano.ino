@@ -8,14 +8,27 @@
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 const uint8_t keyPattern[12] = {0,1,0,1,0,0,1,0,1,0,1,0};
-const uint8_t singleLEDKeys[] = {17, 11, 36};
-const uint8_t singleLEDKeyCount = sizeof(singleLEDKeys) / sizeof(singleLEDKeys[0]);
 
-bool isSingleLEDKey(int key) {
-  for (uint8_t i = 0; i < singleLEDKeyCount; i++) {
-    if (singleLEDKeys[i] == key) return true;
+// LED configuration: stores which keys use 3 LEDs (bit array)
+// 72 keys / 8 bits per byte = 9 bytes
+uint8_t threeLEDKeys[9] = {0};
+
+bool isThreeLEDKey(int key) {
+  if (key < 0 || key >= 72) return false;
+  uint8_t byteIndex = key / 8;
+  uint8_t bitIndex = key % 8;
+  return (threeLEDKeys[byteIndex] & (1 << bitIndex)) != 0;
+}
+
+void setThreeLEDKey(int key, bool enabled) {
+  if (key < 0 || key >= 72) return;
+  uint8_t byteIndex = key / 8;
+  uint8_t bitIndex = key % 8;
+  if (enabled) {
+    threeLEDKeys[byteIndex] |= (1 << bitIndex);
+  } else {
+    threeLEDKeys[byteIndex] &= ~(1 << bitIndex);
   }
-  return false;
 }
 
 float keyBrightness[72] = {0}; // 0-99 for each key
@@ -27,7 +40,8 @@ unsigned long lastClearTime = 0; // Track when we last cleared all keys
 #define UPDATE_FLAG  0x01
 #define READY_FLAG   0xCC
 #define ERROR_FLAG   0xEE
-#define CLEAR_FLAG   0x02  // New: clear all LEDs
+#define CLEAR_FLAG   0x02  // clear all LEDs
+#define CONFIG_FLAG  0x03  // configure LED mapping
 
 void setup() {
   strip.begin();
@@ -79,7 +93,8 @@ void renderLEDs() {
   int whiteKeyCount = 0;
   
   while (led < LED_COUNT && key < 72) {
-    int ledsForThisKey = isSingleLEDKey(key) ? 1 : 2;
+    // Check if this key uses 3 LEDs, otherwise use 2
+    int ledsForThisKey = isThreeLEDKey(key) ? 3 : 2;
     float brightness = keyBrightness[key] / 99.0 * BRIGHTNESS;
     uint8_t noteInOctave = key % 12;
     uint32_t color = 0;
@@ -138,6 +153,12 @@ void loop() {
         } else if (flag == CLEAR_FLAG && count == 1) {
           sawClear = true;
           clearAllKeys();
+        } else if (flag == CONFIG_FLAG && count == 9) {
+          // Receive 9 bytes of LED configuration
+          // Each triplet: CONFIG_FLAG, byte_index, byte_value
+          if (i < 9 && key < 9) {
+            threeLEDKeys[key] = val;
+          }
         } else {
           valid = false;
         }

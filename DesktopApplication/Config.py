@@ -8,6 +8,7 @@ PACKET_END = 0x55
 UPDATE_FLAG = 0x01
 READY_FLAG = 0xCC
 ERROR_FLAG = 0xEE
+CONFIG_FLAG = 0x03  # New: send LED configuration
 
 # MIDI settings
 MIDI_KEY_OFFSET = 36
@@ -49,3 +50,7 @@ MAGENTA = (255, 0, 255)
 BUTTON_COLOR = (70, 70, 70)
 BUTTON_HOVER = (90, 90, 90)
 BUTTON_PRESSED = (50, 50, 50)
+
+# Configuration mode colors
+CONFIG_MODE_OVERLAY = (255, 165, 0, 100)  # Orange overlay for config mode
+CONFIG_MODE_SELECTED = (0, 255, 0, 150)   # Green for selected 3-LED keys

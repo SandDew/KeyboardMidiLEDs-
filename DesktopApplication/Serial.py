@@ -3,6 +3,7 @@ import time
 from Config import *
 
 CLEAR_FLAG = 0x02  # Must match firmware
+CONFIG_FLAG = 0x03  # Must match firmware
 
 class KeyboardController:
     def __init__(self):
@@ -81,5 +82,34 @@ class KeyboardController:
                         break
                     time.sleep(0.001)
             except Exception:
+                break
+        return False
+    
+    def send_config(self, config_bytes, timeout=0.02, max_retries=5):
+        """Send LED configuration to Arduino (9 bytes)"""
+        if not self.connected:
+            return False
+        
+        # Send 9 triplets: CONFIG_FLAG, byte_index, byte_value
+        frame = bytearray([PACKET_START, 9])
+        for i, byte_val in enumerate(config_bytes):
+            frame.append(CONFIG_FLAG)
+            frame.append(i)  # byte index
+            frame.append(byte_val)
+        frame.append(PACKET_END)
+        
+        for _ in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start = time.time()
+                while time.time() - start < timeout:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break
+            except:
                 break
         return False

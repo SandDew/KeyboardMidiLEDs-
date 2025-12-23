@@ -12,8 +12,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from Config import *
 from GUI.Visuals import SimpleButton, SimpleKeyboard, SimpleDropdown, SimpleSlider
+from LED_Config import LEDConfigManager
 
 CLEAR_FLAG = 0x02  # New clear command (must match firmware)
+CONFIG_FLAG = 0x03  # Configuration command (must match firmware)
 
 class MidiPlayerGUI:
     def __init__(self, initial_state=None):
@@ -46,7 +48,7 @@ class MidiPlayerGUI:
 
         # Buttons (centered at the top)
         self.buttons = []
-        total_width = self.button_width + self.button_height + 10 + 160 + 10 + 120  # Added space for clear button
+        total_width = self.button_width + self.button_height + 10 + 160 + 10 + 120 + 10 + 130  # Added config button
         bx = (WINDOW_WIDTH - total_width) // 2
         by = self.margin
         self.buttons.append(SimpleButton(
@@ -72,8 +74,13 @@ class MidiPlayerGUI:
         self.buttons.append(SimpleButton(
             bx, by, 120, self.button_height, "Clear Keys", self.font, self.clear_keyboard))
 
+        # Configuration button
+        bx += 130
+        self.buttons.append(SimpleButton(
+            bx, by, 130, self.button_height, "Configure", self.font, self.toggle_config_mode))
+
         # Add skip buttons with symbols for compactness
-        bx_skip = bx + 140  # after clear button
+        bx_skip = bx + 140  # after config button
         self.buttons.append(SimpleButton(
             bx_skip, by, 40, self.button_height, "⏮", self.font, self.skip_back))
         bx_skip += 50
@@ -101,6 +108,11 @@ class MidiPlayerGUI:
         self.playhead = 0.0
         self.speed = self.speeds[self.speed_index]
         self.user_exit = False
+
+        # Configuration mode
+        self.config_mode = False
+        self.led_config = LEDConfigManager()
+        self.config_mode_all_on = False  # Track if all LEDs are on in config mode
 
         # Threading
         self.running = True
@@ -310,6 +322,87 @@ class MidiPlayerGUI:
         if self.serial_connected:
             self.send_clear()
         self.keyboard.set_active({})
+    
+    def toggle_config_mode(self):
+        """Toggle configuration mode for LED mapping."""
+        self.config_mode = not self.config_mode
+        
+        if self.config_mode:
+            # Entering config mode
+            # Stop playback
+            if self.playing:
+                self.playing = False
+                self.paused = False
+            
+            # Turn on all LEDs to visualize the mapping
+            self.config_mode_all_on = True
+            self._update_config_mode_display()
+        else:
+            # Exiting config mode
+            self.config_mode_all_on = False
+            
+            # Save configuration
+            self.led_config.save_config()
+            
+            # Send configuration to Arduino
+            if self.serial_connected:
+                config_bytes = self.led_config.get_config_bytes()
+                self.send_config(config_bytes)
+            
+            # Clear all LEDs
+            self.clear_keyboard()
+    
+    def _update_config_mode_display(self):
+        """Update the display in configuration mode."""
+        if self.config_mode and self.config_mode_all_on:
+            # Turn on all keys to show LED mapping
+            key_brightness = {i: MAX_BRIGHTNESS for i in range(NUM_KEYS)}
+            self.keyboard.set_active(key_brightness)
+            if self.serial_connected:
+                # Send brightness as 0-99 range for hardware
+                hardware_brightness = {i: 99 for i in range(NUM_KEYS)}
+                self.send_keys(hardware_brightness)
+    
+    def _handle_config_mode_click(self, key):
+        """Handle clicking on a key in configuration mode."""
+        if not self.config_mode:
+            return
+        
+        # Toggle 3-LED status for the clicked key
+        is_three_led = self.led_config.toggle_three_led_key(key)
+        
+        # Update display
+        self._update_config_mode_display()
+    
+    def send_config(self, config_bytes, timeout=0.02, max_retries=5):
+        """Send LED configuration to Arduino (9 bytes)"""
+        if not self.serial_connected or not self.ser:
+            return False
+        
+        # Send 9 triplets: CONFIG_FLAG, byte_index, byte_value
+        frame = bytearray([PACKET_START, 9])
+        for i, byte_val in enumerate(config_bytes):
+            frame.append(CONFIG_FLAG)
+            frame.append(i)  # byte index
+            frame.append(byte_val)
+        frame.append(PACKET_END)
+        
+        for _ in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start = time.time()
+                while time.time() - start < timeout:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break
+            except Exception as e:
+                self._handle_serial_error(e)
+                break
+        return False
 
     def select_midi(self):
         root = tk.Tk()
@@ -672,6 +765,37 @@ class MidiPlayerGUI:
                                 })
         
         return notes
+    
+    def _draw_config_mode_overlay(self):
+        """Draw overlay for configuration mode showing 3-LED key selections."""
+        # Draw banner at top
+        banner_height = 60
+        banner_rect = pygame.Rect(0, self.margin + self.button_height + 50, WINDOW_WIDTH, banner_height)
+        overlay = pygame.Surface((WINDOW_WIDTH, banner_height), pygame.SRCALPHA)
+        overlay.fill((255, 140, 0, 180))  # Orange overlay
+        self.screen.blit(overlay, banner_rect)
+        
+        # Draw text
+        title_text = self.font.render("Configuration Mode", True, WHITE)
+        title_rect = title_text.get_rect(center=(WINDOW_WIDTH // 2, banner_rect.centery - 10))
+        self.screen.blit(title_text, title_rect)
+        
+        instruction_font = pygame.font.Font(None, 20)
+        instruction_text = instruction_font.render("Click keys to toggle 3-LED mode (green overlay). Click Configure again to save.", True, WHITE)
+        instruction_rect = instruction_text.get_rect(center=(WINDOW_WIDTH // 2, banner_rect.centery + 12))
+        self.screen.blit(instruction_text, instruction_rect)
+        
+        # Draw overlay on keys that use 3 LEDs
+        for key in range(NUM_KEYS):
+            if self.led_config.is_three_led_key(key):
+                if key < len(self.keyboard.key_rects):
+                    k = self.keyboard.key_rects[key]
+                    rect = k["rect"].copy()
+                    rect.x += self.keyboard.x
+                    rect.y += self.keyboard.y
+                    key_overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
+                    key_overlay.fill(CONFIG_MODE_SELECTED)  # Green for 3-LED keys
+                    self.screen.blit(key_overlay, (rect.x, rect.y))
 
     def run(self):
         try:
@@ -680,6 +804,13 @@ class MidiPlayerGUI:
                     if event.type == pygame.QUIT:
                         self.running = False
                         self.user_exit = True
+                    
+                    # Handle keyboard clicks in configuration mode
+                    if self.config_mode and event.type == pygame.MOUSEBUTTONDOWN:
+                        clicked_key = self.keyboard.get_clicked_key(event.pos)
+                        if clicked_key is not None:
+                            self._handle_config_mode_click(clicked_key)
+                    
                     for btn in self.buttons:
                         btn.handle_event(event)
                     self.speed_dropdown.handle_event(event)
@@ -695,8 +826,12 @@ class MidiPlayerGUI:
                             self.playing = False
 
                 # Update keyboard state
-                self.keyboard.set_active(self._get_active_keys())
-                self.keyboard.set_falling_notes(self._get_falling_notes())
+                if not self.config_mode:
+                    self.keyboard.set_active(self._get_active_keys())
+                    self.keyboard.set_falling_notes(self._get_falling_notes())
+                else:
+                    # In config mode, show which keys are selected for 3 LEDs
+                    self.keyboard.set_falling_notes([])
 
                 # Keep slider synced when not dragging
                 if self.midi_length > 0 and not self.playhead_slider.dragging:
@@ -705,6 +840,11 @@ class MidiPlayerGUI:
                 # Draw
                 self.screen.fill(BLACK)
                 self.keyboard.draw(self.screen)
+                
+                # Draw configuration mode overlay
+                if self.config_mode:
+                    self._draw_config_mode_overlay()
+                
                 self.playhead_slider.draw(self.screen)
                 
                 for btn in self.buttons:
