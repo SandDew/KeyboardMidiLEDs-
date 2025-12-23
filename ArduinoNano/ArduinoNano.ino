@@ -156,7 +156,7 @@ void loop() {
         } else if (flag == CONFIG_FLAG && count == 9) {
           // Receive 9 bytes of LED configuration
           // Each triplet: CONFIG_FLAG, byte_index, byte_value
-          if (i < 9 && key < 9) {
+          if (key < 9) {
             threeLEDKeys[key] = val;
           }
         } else {

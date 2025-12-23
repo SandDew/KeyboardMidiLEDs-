@@ -9,8 +9,7 @@ CONFIG_FILE = "led_config.json"
 
 class LEDConfigManager:
     def __init__(self):
-        # Default configuration: keys that use 3 LEDs for alignment
-        # By default, matches the old hardcoded 1-LED keys (which shift to be 3-LED in new system)
+        # Default configuration: empty set (all keys use 2 LEDs by default)
         self.three_led_keys = set()
         self.load_config()
     

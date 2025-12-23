@@ -35,6 +35,11 @@ class MidiPlayerGUI:
         self.margin = 20
         self.button_height = 40
         self.button_width = 140
+        self.button_spacing = 10
+        self.speed_dropdown_width = 160
+        self.clear_button_width = 120
+        self.config_button_width = 130
+        self.skip_button_width = 40
         self.keyboard_height = KEYBOARD_HEIGHT
         self.keyboard_width = WINDOW_WIDTH - 2 * self.margin
 
@@ -48,12 +53,15 @@ class MidiPlayerGUI:
 
         # Buttons (centered at the top)
         self.buttons = []
-        total_width = self.button_width + self.button_height + 10 + 160 + 10 + 120 + 10 + 130  # Added config button
+        total_width = (self.button_width + self.button_height + 
+                      self.speed_dropdown_width + self.clear_button_width + 
+                      self.config_button_width + self.skip_button_width * 2 + 
+                      self.button_spacing * 6)
         bx = (WINDOW_WIDTH - total_width) // 2
         by = self.margin
         self.buttons.append(SimpleButton(
             bx, by, self.button_width, self.button_height, "Select MIDI", self.font, self.select_midi))
-        bx += self.button_width + 10
+        bx += self.button_width + self.button_spacing
         # Play/Pause button with symbol
         self.buttons.append(SimpleButton(
             bx, by, self.button_height, self.button_height, "", self.font, self.toggle_playpause,
@@ -61,31 +69,31 @@ class MidiPlayerGUI:
         ))
 
         # Speed dropdown - position dropdown menu below the slider
-        bx += self.button_height + 10
+        bx += self.button_height + self.button_spacing
         slider_y = by + self.button_height + 18
         dropdown_menu_y = slider_y + 20  # Position below slider
         self.speed_dropdown = SimpleDropdown(
-            bx, by, 160, self.button_height, self._get_speed_labels(), self.font, 
+            bx, by, self.speed_dropdown_width, self.button_height, self._get_speed_labels(), self.font, 
             self._on_speed_change, self.speed_index, dropdown_y_override=dropdown_menu_y
         )
 
         # Clear keyboard button
-        bx += 170
+        bx += self.speed_dropdown_width + self.button_spacing
         self.buttons.append(SimpleButton(
-            bx, by, 120, self.button_height, "Clear Keys", self.font, self.clear_keyboard))
+            bx, by, self.clear_button_width, self.button_height, "Clear Keys", self.font, self.clear_keyboard))
 
         # Configuration button
-        bx += 130
+        bx += self.clear_button_width + self.button_spacing
         self.buttons.append(SimpleButton(
-            bx, by, 130, self.button_height, "Configure", self.font, self.toggle_config_mode))
+            bx, by, self.config_button_width, self.button_height, "Configure", self.font, self.toggle_config_mode))
 
         # Add skip buttons with symbols for compactness
-        bx_skip = bx + 140  # after config button
+        bx += self.config_button_width + self.button_spacing
         self.buttons.append(SimpleButton(
-            bx_skip, by, 40, self.button_height, "⏮", self.font, self.skip_back))
-        bx_skip += 50
+            bx, by, self.skip_button_width, self.button_height, "⏮", self.font, self.skip_back))
+        bx += self.skip_button_width + self.button_spacing
         self.buttons.append(SimpleButton(
-            bx_skip, by, 40, self.button_height, "⏭", self.font, self.skip_forward))
+            bx, by, self.skip_button_width, self.button_height, "⏭", self.font, self.skip_forward))
 
         # Playhead slider below buttons (60% width, centered)
         slider_width = int(self.keyboard_width * 0.6)
