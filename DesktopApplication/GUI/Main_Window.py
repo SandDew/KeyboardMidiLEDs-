@@ -16,7 +16,7 @@ from GUI.Visuals import SimpleButton, SimpleKeyboard, SimpleDropdown, SimpleSlid
 CLEAR_FLAG = 0x02  # New clear command (must match firmware)
 
 class MidiPlayerGUI:
-    def __init__(self):
+    def __init__(self, initial_state=None):
         pygame.init()
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Keyboard MIDI LED Player (Reworked)")
@@ -100,6 +100,7 @@ class MidiPlayerGUI:
         self.paused = False
         self.playhead = 0.0
         self.speed = self.speeds[self.speed_index]
+        self.user_exit = False
 
         # Threading
         self.running = True
@@ -108,6 +109,10 @@ class MidiPlayerGUI:
         self.update_thread.start()
         self.serial_monitor_thread = threading.Thread(target=self._serial_monitor_loop, daemon=True)
         self.serial_monitor_thread.start()
+
+        # Restore previous session state if provided
+        if initial_state:
+            self._restore_state(initial_state)
 
     def _try_connect_serial(self):
         """Try to connect to serial device"""
@@ -336,6 +341,31 @@ class MidiPlayerGUI:
                 self.midi_file = None
                 self.note_times = None
                 self.midi_length = 0
+
+    def _restore_state(self, state):
+        """Restore last known state after a crash restart."""
+        try:
+            midi_path = state.get("midi_file") if state else None
+            playhead = state.get("playhead", 0.0) if state else 0.0
+            speed = state.get("speed") if state else None
+            speed_index = state.get("speed_index") if state else None
+            custom_speed = state.get("custom_speed") if state else None
+
+            if midi_path and os.path.exists(midi_path):
+                from MIDI_Parser import parse_midi_file
+                self.midi_file = midi_path
+                self.note_times, self.midi_length = parse_midi_file(midi_path)
+                self.playhead = min(playhead, self.midi_length)
+                if self.midi_length > 0:
+                    self.playhead_slider.set_value(self.playhead / self.midi_length)
+            # Restore speed settings
+            if speed is not None:
+                self.speed = speed
+            if speed_index is not None and 0 <= speed_index < len(self.speeds):
+                self.speed_index = speed_index
+            self.custom_speed = custom_speed
+        except Exception as e:
+            print(f"Failed to restore previous state: {e}")
 
     def toggle_playpause(self):
         if not self.note_times:
@@ -649,6 +679,7 @@ class MidiPlayerGUI:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         self.running = False
+                        self.user_exit = True
                     for btn in self.buttons:
                         btn.handle_event(event)
                     self.speed_dropdown.handle_event(event)
@@ -692,3 +723,13 @@ class MidiPlayerGUI:
                 self.ser.close()
             pygame.quit()
             pygame.quit()
+
+    def export_state(self):
+        """Return a dict with the minimal state to restore after a crash."""
+        return {
+            "midi_file": self.midi_file,
+            "playhead": self.playhead,
+            "speed": self.speed,
+            "speed_index": self.speed_index,
+            "custom_speed": self.custom_speed,
+        }
