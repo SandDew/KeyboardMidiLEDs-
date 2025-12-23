@@ -3,6 +3,7 @@ import time
 from Config import *
 
 CLEAR_FLAG = 0x02  # Must match firmware
+CONFIG_FLAG = 0x03  # Must match firmware
 
 class KeyboardController:
     def __init__(self):
