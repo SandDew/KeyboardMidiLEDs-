@@ -9,7 +9,7 @@ CONFIG_FILE = "led_config.json"
 
 class LEDConfigManager:
     def __init__(self):
-        # Default configuration: empty set (all keys use 2 LEDs by default)
+        # Configuration: which keys use 3 LEDs (empty set = all keys use 2 LEDs, the default)
         self.three_led_keys = set()
         self.load_config()
     

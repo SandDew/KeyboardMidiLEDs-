@@ -12,10 +12,7 @@ CONFIG_FLAG = 0x03  # New: send LED configuration
 
 # MIDI settings
 MIDI_KEY_OFFSET = 36
-NUM_KEYS = 72  # 6 octaves (remove duplicate)
-MAX_BRIGHTNESS = 255
-FADE_RANGE = 0.5
-UPDATE_RATE = 0.005
+NUM_KEYS = 72  # 6 octaves
 
 # Display settings
 WINDOW_WIDTH = 1240
@@ -30,10 +27,10 @@ FALL_TIME_VISIBLE = 2.0  # How long before a note plays that it starts falling
 MAX_FALLING_NOTES = 1000
 NOTE_CLEANUP_INTERVAL = 0.5
 
-# Key settings
-FADE_RANGE = 0.8  # Increased fade range for better visibility
-MAX_BRIGHTNESS = 85  # Increased from 70 for better visibility
-UPDATE_RATE = 0.01   # Changed to match working version
+# Key settings (LED brightness and fading)
+FADE_RANGE = 0.8  # Fade range in seconds for better visibility
+MAX_BRIGHTNESS = 85  # Maximum LED brightness (0-255 scale for GUI, converted to 0-99 for Arduino)
+UPDATE_RATE = 0.01   # Update rate in seconds
 
 # Colors
 BLACK = (0, 0, 0)
