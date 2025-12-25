@@ -367,9 +367,8 @@ class MidiPlayerGUI:
             key_brightness = {i: MAX_BRIGHTNESS for i in range(NUM_KEYS)}
             self.keyboard.set_active(key_brightness)
             if self.serial_connected:
-                # Send brightness as 0-99 range for hardware
-                hardware_brightness = {i: 99 for i in range(NUM_KEYS)}
-                self.send_keys(hardware_brightness)
+                # Send brightness in MAX_BRIGHTNESS range (send_keys will convert to 0-99)
+                self.send_keys(key_brightness)
     
     def _handle_config_mode_click(self, key):
         """Handle clicking on a key in configuration mode."""
