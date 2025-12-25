@@ -47,6 +47,18 @@ The desktop application and Arduino communicate via serial using a packet-based 
 - `CONFIG_FLAG (0x03)`: Configure LED mapping
   - Format: 9 triplets of `[0x03, byte_index, byte_value]`
   - Used to send LED configuration (which keys use 3 LEDs vs 2 LEDs)
+  
+- `CONFIG_MODE_ENTER (0x04)`: Enter configuration mode
+  - Format: `[0x04, 0, 0]` (single triplet)
+  - Arduino turns on all LEDs at full brightness internally
+  
+- `CONFIG_MODE_EXIT (0x05)`: Exit configuration mode
+  - Format: `[0x05, 0, 0]` (single triplet)
+  - Arduino clears all LEDs
+  
+- `CONFIG_MODE_TOGGLE (0x06)`: Toggle 3-LED status for a key
+  - Format: `[0x06, key_number, 0]` (single triplet)
+  - Used during configuration mode to toggle individual keys
 
 #### Response Flags
 - `READY_FLAG (0xCC)`: Command executed successfully
@@ -164,21 +176,32 @@ Allows users to customize which keys use 3 LEDs instead of 2, enabling the LED s
 
 1. **Entering Configuration Mode**
    - Click "Configure" button in GUI
-   - All LEDs turn on at full brightness
-   - Orange banner appears with instructions
+   - Desktop sends `CONFIG_MODE_ENTER` command to Arduino
+   - Arduino turns on all 72 LEDs at full brightness internally
+   - Orange banner appears in GUI with instructions
    - Playback automatically stops
 
 2. **Selecting 3-LED Keys**
    - Click on any key in the keyboard visualization
-   - Key toggles between 2-LED (default) and 3-LED mode
-   - 3-LED keys show green overlay
-   - Changes are temporary until saved
+   - Desktop sends `CONFIG_MODE_TOGGLE` command for that specific key
+   - Arduino immediately toggles the 3-LED status and re-renders LEDs
+   - 3-LED keys show green overlay in GUI
+   - LED strip updates in real-time to show the new mapping
 
 3. **Saving Configuration**
    - Click "Configure" button again to exit and save
    - Configuration saved to `led_config.json`
-   - Configuration sent to Arduino via serial
-   - Arduino updates LED mapping in real-time
+   - Configuration sent to Arduino via `CONFIG_FLAG`
+   - Desktop sends `CONFIG_MODE_EXIT` command
+   - Arduino clears all LEDs and returns to normal mode
+
+### Technical Details
+
+**Bandwidth Optimization:**
+- Old approach: Send all 72 keys' brightness = 72 triplets = ~220 bytes
+- New approach: Enter config mode = 1 command = 6 bytes
+- Per-key toggle = 1 command = 6 bytes each
+- Result: Dramatically reduced bandwidth requirements, no serial buffer overflow
 
 ### Configuration File Format
 
@@ -431,10 +454,13 @@ This is an open-source educational project designed to help piano learners visua
 
 ### Serial Protocol Quick Reference
 ```
-Update keys:  [0xAA] [N] [0x01, key, brightness] * N [0x55]
-Clear all:    [0xAA] [1] [0x02, 0, 0] [0x55]
-Configure:    [0xAA] [9] [0x03, idx, val] * 9 [0x55]
-Response:     [0xCC] success or [0xEE] error
+Update keys:     [0xAA] [N] [0x01, key, brightness] * N [0x55]
+Clear all:       [0xAA] [1] [0x02, 0, 0] [0x55]
+Configure:       [0xAA] [9] [0x03, idx, val] * 9 [0x55]
+Config Enter:    [0xAA] [1] [0x04, 0, 0] [0x55]
+Config Exit:     [0xAA] [1] [0x05, 0, 0] [0x55]
+Config Toggle:   [0xAA] [1] [0x06, key, 0] [0x55]
+Response:        [0xCC] success or [0xEE] error
 ```
 
 ### File Paths
