@@ -254,6 +254,30 @@ class SimpleKeyboard:
 
     def set_falling_notes(self, falling_notes):
         self.falling_notes = falling_notes
+    
+    def get_clicked_key(self, mouse_pos):
+        """Return the key index that was clicked, or None if no key was clicked."""
+        # Adjust mouse position relative to keyboard position
+        rel_x = mouse_pos[0] - self.x
+        rel_y = mouse_pos[1] - self.y
+        
+        # Check if click is within keyboard bounds
+        if rel_x < 0 or rel_x >= self.width or rel_y < 0 or rel_y >= self.height:
+            return None
+        
+        # Check black keys first (they're on top)
+        for k in self.key_rects:
+            if not k["is_white"]:
+                if k["rect"].collidepoint(rel_x, rel_y):
+                    return k["note"]
+        
+        # Then check white keys
+        for k in self.key_rects:
+            if k["is_white"]:
+                if k["rect"].collidepoint(rel_x, rel_y):
+                    return k["note"]
+        
+        return None
 
     def draw(self, surf):
         # 1) Draw falling bars (white-first, then black) and track overlapped keys for overlays on keys
