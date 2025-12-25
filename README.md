@@ -25,12 +25,14 @@ Additionally, the script is designed for Windows. A Linux or Mac could work, but
 
 ## Configuration Mode
 
-**NEW:** Use the Configuration Mode to customize which keys use 3 LEDs instead of 2, allowing the LED strip to align properly with your specific keyboard layout.
+**NEW:** Use the Configuration Mode to customize how many LEDs (1, 2, or 3) each key uses, allowing the LED strip to align perfectly with your specific keyboard layout.
 
 1. Click the "Configure" button in the GUI
 2. All LEDs turn on to visualize the current mapping
-3. Click on keys to toggle between 2-LED and 3-LED modes
-   - Keys with 3 LEDs show a green overlay
+3. Click on keys to cycle through LED counts: 1 → 2 → 3 → 1
+   - Red overlay = 1 LED
+   - No overlay = 2 LEDs (default)
+   - Green overlay = 3 LEDs
 4. Click "Configure" again to save your settings
 
 Your configuration is saved to `led_config.json` and automatically sent to the Arduino.

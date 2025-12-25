@@ -45,8 +45,9 @@ The desktop application and Arduino communicate via serial using a packet-based 
   - Format: `[0x02, 0, 0]` (single triplet)
   
 - `CONFIG_FLAG (0x03)`: Configure LED mapping
-  - Format: 9 triplets of `[0x03, byte_index, byte_value]`
-  - Used to send LED configuration (which keys use 3 LEDs vs 2 LEDs)
+  - Format: 18 triplets of `[0x03, byte_index, byte_value]`
+  - Used to send LED configuration (1, 2, or 3 LEDs per key)
+  - Encoding: 2 bits per key (00=2 LEDs, 01=1 LED, 10=3 LEDs)
   
 - `CONFIG_MODE_ENTER (0x04)`: Enter configuration mode
   - Format: `[0x04, 0, 0]` (single triplet)
@@ -56,9 +57,9 @@ The desktop application and Arduino communicate via serial using a packet-based 
   - Format: `[0x05, 0, 0]` (single triplet)
   - Arduino clears all LEDs
   
-- `CONFIG_MODE_TOGGLE (0x06)`: Toggle 3-LED status for a key
+- `CONFIG_MODE_TOGGLE (0x06)`: Cycle LED count for a key
   - Format: `[0x06, key_number, 0]` (single triplet)
-  - Used during configuration mode to toggle individual keys
+  - Used during configuration mode to cycle through 1→2→3→1 LEDs
 
 #### Response Flags
 - `READY_FLAG (0xCC)`: Command executed successfully
@@ -68,10 +69,12 @@ The desktop application and Arduino communicate via serial using a packet-based 
 
 The Arduino maps 72 piano keys to 123 LEDs on the strip:
 
-- **Standard Keys**: Use 2 LEDs each
+- **1-LED Keys**: Use 1 LED (configurable via configuration mode)
+- **2-LED Keys**: Use 2 LEDs (default)
 - **3-LED Keys**: Use 3 LEDs (configurable via configuration mode)
-  - Purpose: Shift alignment to match physical keyboard differences
-  - Configuration stored in 9-byte bit array (72 keys / 8 bits = 9 bytes)
+  - Purpose: Adjust alignment to match physical keyboard differences
+  - Configuration stored in 18-byte array (72 keys × 2 bits = 144 bits = 18 bytes)
+  - Encoding: 00=2 LEDs (default), 01=1 LED, 10=3 LEDs
 
 #### LED Color Pattern (White vs Black Keys)
 - White keys (even): Green `(0, brightness, 0)`
@@ -170,7 +173,7 @@ Where W=white (0), B=black (1)
 ## Configuration Mode
 
 ### Purpose
-Allows users to customize which keys use 3 LEDs instead of 2, enabling the LED strip to align properly with different physical keyboards.
+Allows users to customize how many LEDs (1, 2, or 3) each key uses, enabling the LED strip to align properly with different physical keyboards.
 
 ### How It Works
 
@@ -181,11 +184,14 @@ Allows users to customize which keys use 3 LEDs instead of 2, enabling the LED s
    - Orange banner appears in GUI with instructions
    - Playback automatically stops
 
-2. **Selecting 3-LED Keys**
+2. **Adjusting LED Counts**
    - Click on any key in the keyboard visualization
    - Desktop sends `CONFIG_MODE_TOGGLE` command for that specific key
-   - Arduino immediately toggles the 3-LED status and re-renders LEDs
-   - 3-LED keys show green overlay in GUI
+   - Arduino cycles the LED count: 1 → 2 → 3 → 1
+   - Visual feedback in GUI:
+     - Red overlay = 1 LED
+     - No overlay/gray = 2 LEDs (default)
+     - Green overlay = 3 LEDs
    - LED strip updates in real-time to show the new mapping
 
 3. **Saving Configuration**
@@ -208,9 +214,16 @@ Allows users to customize which keys use 3 LEDs instead of 2, enabling the LED s
 `led_config.json`:
 ```json
 {
-  "three_led_keys": [11, 17, 36]
+  "led_counts": {
+    "11": 1,
+    "17": 3,
+    "24": 1,
+    "36": 3
+  }
 }
 ```
+
+Keys not listed use the default of 2 LEDs. The file stores only non-default values to keep it compact.
 
 Array contains key numbers (0-71) that should use 3 LEDs.
 
@@ -456,10 +469,10 @@ This is an open-source educational project designed to help piano learners visua
 ```
 Update keys:     [0xAA] [N] [0x01, key, brightness] * N [0x55]
 Clear all:       [0xAA] [1] [0x02, 0, 0] [0x55]
-Configure:       [0xAA] [9] [0x03, idx, val] * 9 [0x55]
+Configure:       [0xAA] [18] [0x03, idx, val] * 18 [0x55]
 Config Enter:    [0xAA] [1] [0x04, 0, 0] [0x55]
 Config Exit:     [0xAA] [1] [0x05, 0, 0] [0x55]
-Config Toggle:   [0xAA] [1] [0x06, key, 0] [0x55]
+Config Cycle:    [0xAA] [1] [0x06, key, 0] [0x55]  (cycles 1→2→3→1)
 Response:        [0xCC] success or [0xEE] error
 ```
 
