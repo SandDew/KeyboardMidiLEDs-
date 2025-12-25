@@ -14,8 +14,11 @@ from Config import *
 from GUI.Visuals import SimpleButton, SimpleKeyboard, SimpleDropdown, SimpleSlider
 from LED_Config import LEDConfigManager
 
-CLEAR_FLAG = 0x02  # New clear command (must match firmware)
-CONFIG_FLAG = 0x03  # Configuration command (must match firmware)
+CLEAR_FLAG = 0x02  # clear command (must match firmware)
+CONFIG_FLAG = 0x03  # configuration command (must match firmware)
+CONFIG_MODE_ENTER = 0x04  # enter configuration mode
+CONFIG_MODE_EXIT = 0x05  # exit configuration mode
+CONFIG_MODE_TOGGLE = 0x06  # toggle 3-LED status
 
 class MidiPlayerGUI:
     def __init__(self, initial_state=None):
@@ -120,7 +123,6 @@ class MidiPlayerGUI:
         # Configuration mode
         self.config_mode = False
         self.led_config = LEDConfigManager()
-        self.config_mode_all_on = False  # Track if all LEDs are on in config mode
 
         # Threading
         self.running = True
@@ -342,13 +344,15 @@ class MidiPlayerGUI:
                 self.playing = False
                 self.paused = False
             
-            # Turn on all LEDs to visualize the mapping
-            self.config_mode_all_on = True
-            self._update_config_mode_display()
+            # Send command to Arduino to enter config mode (turns on all LEDs)
+            if self.serial_connected:
+                self.send_config_mode_enter()
+            
+            # Update GUI to show all keys as active
+            key_brightness = {i: MAX_BRIGHTNESS for i in range(NUM_KEYS)}
+            self.keyboard.set_active(key_brightness)
         else:
             # Exiting config mode
-            self.config_mode_all_on = False
-            
             # Save configuration
             self.led_config.save_config()
             
@@ -356,30 +360,92 @@ class MidiPlayerGUI:
             if self.serial_connected:
                 config_bytes = self.led_config.get_config_bytes()
                 self.send_config(config_bytes)
+                # Exit config mode on Arduino
+                self.send_config_mode_exit()
             
-            # Clear all LEDs
-            self.clear_keyboard()
+            # Clear GUI display
+            self.keyboard.set_active({})
     
-    def _update_config_mode_display(self):
-        """Update the display in configuration mode."""
-        if self.config_mode and self.config_mode_all_on:
-            # Turn on all keys to show LED mapping
-            key_brightness = {i: MAX_BRIGHTNESS for i in range(NUM_KEYS)}
-            self.keyboard.set_active(key_brightness)
-            if self.serial_connected:
-                # Send brightness in MAX_BRIGHTNESS range (send_keys will convert to 0-99)
-                self.send_keys(key_brightness)
+    def send_config_mode_enter(self, timeout=0.02, max_retries=5):
+        """Send command to enter configuration mode."""
+        if not self.serial_connected or not self.ser:
+            return False
+        
+        frame = bytearray([PACKET_START, 1, CONFIG_MODE_ENTER, 0, 0, PACKET_END])
+        for _ in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start = time.time()
+                while time.time() - start < timeout:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break
+            except Exception as e:
+                self._handle_serial_error(e)
+                break
+        return False
+    
+    def send_config_mode_exit(self, timeout=0.02, max_retries=5):
+        """Send command to exit configuration mode."""
+        if not self.serial_connected or not self.ser:
+            return False
+        
+        frame = bytearray([PACKET_START, 1, CONFIG_MODE_EXIT, 0, 0, PACKET_END])
+        for _ in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start = time.time()
+                while time.time() - start < timeout:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break
+            except Exception as e:
+                self._handle_serial_error(e)
+                break
+        return False
+    
+    def send_config_mode_toggle(self, key, timeout=0.02, max_retries=5):
+        """Send command to toggle 3-LED status for a key."""
+        if not self.serial_connected or not self.ser:
+            return False
+        
+        frame = bytearray([PACKET_START, 1, CONFIG_MODE_TOGGLE, key, 0, PACKET_END])
+        for _ in range(max_retries):
+            try:
+                self.ser.write(frame)
+                self.ser.flush()
+                start = time.time()
+                while time.time() - start < timeout:
+                    if self.ser.in_waiting:
+                        resp = self.ser.read(1)[0]
+                        if resp == READY_FLAG:
+                            return True
+                        elif resp == ERROR_FLAG:
+                            break
+            except Exception as e:
+                self._handle_serial_error(e)
+                break
+        return False
     
     def _handle_config_mode_click(self, key):
         """Handle clicking on a key in configuration mode."""
         if not self.config_mode:
             return
         
-        # Toggle 3-LED status for the clicked key
+        # Toggle 3-LED status for the clicked key locally
         is_three_led = self.led_config.toggle_three_led_key(key)
         
-        # Update display
-        self._update_config_mode_display()
+        # Send toggle command to Arduino to update LED mapping in real-time
+        if self.serial_connected:
+            self.send_config_mode_toggle(key)
     
     def send_config(self, config_bytes, timeout=0.02, max_retries=5):
         """Send LED configuration to Arduino (9 bytes)"""

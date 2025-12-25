@@ -42,6 +42,11 @@ unsigned long lastClearTime = 0; // Track when we last cleared all keys
 #define ERROR_FLAG   0xEE
 #define CLEAR_FLAG   0x02  // clear all LEDs
 #define CONFIG_FLAG  0x03  // configure LED mapping
+#define CONFIG_MODE_ENTER 0x04  // enter configuration mode (turn on all LEDs)
+#define CONFIG_MODE_EXIT  0x05  // exit configuration mode
+#define CONFIG_MODE_TOGGLE 0x06 // toggle 3-LED status for a key
+
+bool configurationMode = false;  // Track if we're in configuration mode
 
 void setup() {
   strip.begin();
@@ -61,7 +66,27 @@ void clearAllKeys() {
   lastClearTime = millis();
 }
 
+void enterConfigurationMode() {
+  configurationMode = true;
+  // Turn on all LEDs at full brightness to visualize mapping
+  for (int i = 0; i < 72; i++) {
+    keyBrightness[i] = 99; // Full brightness
+    keyLastUpdate[i] = millis();
+  }
+  renderLEDs();
+}
+
+void exitConfigurationMode() {
+  configurationMode = false;
+  clearAllKeys();
+}
+
 void checkAndTimeoutKeys() {
+  // Don't timeout keys in configuration mode
+  if (configurationMode) {
+    return;
+  }
+  
   unsigned long currentTime = millis();
   bool anyChanged = false;
   
@@ -158,6 +183,17 @@ void loop() {
           // Each triplet: CONFIG_FLAG, byte_index, byte_value
           if (key < 9) {
             threeLEDKeys[key] = val;
+          }
+        } else if (flag == CONFIG_MODE_ENTER && count == 1) {
+          enterConfigurationMode();
+        } else if (flag == CONFIG_MODE_EXIT && count == 1) {
+          exitConfigurationMode();
+        } else if (flag == CONFIG_MODE_TOGGLE && count == 1) {
+          // Toggle 3-LED status for a key in config mode
+          if (key < 72) {
+            setThreeLEDKey(key, !isThreeLEDKey(key));
+            // Re-render to show the change
+            renderLEDs();
           }
         } else {
           valid = false;

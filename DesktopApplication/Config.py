@@ -8,7 +8,10 @@ PACKET_END = 0x55
 UPDATE_FLAG = 0x01
 READY_FLAG = 0xCC
 ERROR_FLAG = 0xEE
-CONFIG_FLAG = 0x03  # New: send LED configuration
+CONFIG_FLAG = 0x03  # send LED configuration
+CONFIG_MODE_ENTER = 0x04  # enter configuration mode (turn on all LEDs)
+CONFIG_MODE_EXIT = 0x05  # exit configuration mode
+CONFIG_MODE_TOGGLE = 0x06  # toggle 3-LED status for a key
 
 # MIDI settings
 MIDI_KEY_OFFSET = 36
