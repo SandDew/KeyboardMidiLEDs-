@@ -53,4 +53,6 @@ BUTTON_PRESSED = (50, 50, 50)
 
 # Configuration mode colors
 CONFIG_MODE_OVERLAY = (255, 165, 0, 100)  # Orange overlay for config mode
-CONFIG_MODE_SELECTED = (0, 255, 0, 150)   # Green for selected 3-LED keys
+CONFIG_MODE_1_LED = (255, 0, 0, 150)      # Red for 1-LED keys
+CONFIG_MODE_2_LED = (100, 100, 100, 80)   # Gray for 2-LED keys (default, subtle)
+CONFIG_MODE_3_LED = (0, 255, 0, 150)      # Green for 3-LED keys

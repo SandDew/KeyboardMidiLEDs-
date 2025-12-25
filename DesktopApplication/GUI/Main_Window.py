@@ -440,20 +440,20 @@ class MidiPlayerGUI:
         if not self.config_mode:
             return
         
-        # Toggle 3-LED status for the clicked key locally
-        is_three_led = self.led_config.toggle_three_led_key(key)
+        # Cycle LED count for the clicked key locally (1 -> 2 -> 3 -> 1)
+        new_count = self.led_config.cycle_led_count(key)
         
         # Send toggle command to Arduino to update LED mapping in real-time
         if self.serial_connected:
             self.send_config_mode_toggle(key)
     
     def send_config(self, config_bytes, timeout=0.02, max_retries=5):
-        """Send LED configuration to Arduino (9 bytes)"""
+        """Send LED configuration to Arduino (18 bytes)"""
         if not self.serial_connected or not self.ser:
             return False
         
-        # Send 9 triplets: CONFIG_FLAG, byte_index, byte_value
-        frame = bytearray([PACKET_START, 9])
+        # Send 18 triplets: CONFIG_FLAG, byte_index, byte_value
+        frame = bytearray([PACKET_START, 18])
         for i, byte_val in enumerate(config_bytes):
             frame.append(CONFIG_FLAG)
             frame.append(i)  # byte index
@@ -840,7 +840,7 @@ class MidiPlayerGUI:
         return notes
     
     def _draw_config_mode_overlay(self):
-        """Draw overlay for configuration mode showing 3-LED key selections."""
+        """Draw overlay for configuration mode showing LED count for each key."""
         # Draw banner at top
         banner_height = 60
         banner_rect = pygame.Rect(0, self.margin + self.button_height + 50, WINDOW_WIDTH, banner_height)
@@ -854,21 +854,30 @@ class MidiPlayerGUI:
         self.screen.blit(title_text, title_rect)
         
         instruction_font = pygame.font.Font(None, 20)
-        instruction_text = instruction_font.render("Click keys to toggle 3-LED mode (green overlay). Click Configure again to save.", True, WHITE)
+        instruction_text = instruction_font.render("Click keys to cycle LED count: 1 LED (red), 2 LEDs (gray), 3 LEDs (green). Click Configure to save.", True, WHITE)
         instruction_rect = instruction_text.get_rect(center=(WINDOW_WIDTH // 2, banner_rect.centery + 12))
         self.screen.blit(instruction_text, instruction_rect)
         
-        # Draw overlay on keys that use 3 LEDs
+        # Draw overlay on keys with custom LED counts
         for key in range(NUM_KEYS):
-            if self.led_config.is_three_led_key(key):
-                if key < len(self.keyboard.key_rects):
-                    k = self.keyboard.key_rects[key]
-                    rect = k["rect"].copy()
-                    rect.x += self.keyboard.x
-                    rect.y += self.keyboard.y
-                    key_overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
-                    key_overlay.fill(CONFIG_MODE_SELECTED)  # Green for 3-LED keys
-                    self.screen.blit(key_overlay, (rect.x, rect.y))
+            led_count = self.led_config.get_led_count(key)
+            if key < len(self.keyboard.key_rects):
+                k = self.keyboard.key_rects[key]
+                rect = k["rect"].copy()
+                rect.x += self.keyboard.x
+                rect.y += self.keyboard.y
+                key_overlay = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
+                
+                # Choose color based on LED count
+                if led_count == 1:
+                    key_overlay.fill(CONFIG_MODE_1_LED)  # Red for 1 LED
+                elif led_count == 3:
+                    key_overlay.fill(CONFIG_MODE_3_LED)  # Green for 3 LEDs
+                else:
+                    # Don't show overlay for default 2 LEDs to reduce clutter
+                    continue
+                
+                self.screen.blit(key_overlay, (rect.x, rect.y))
 
     def run(self):
         try:

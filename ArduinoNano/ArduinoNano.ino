@@ -9,26 +9,44 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 const uint8_t keyPattern[12] = {0,1,0,1,0,0,1,0,1,0,1,0};
 
-// LED configuration: stores which keys use 3 LEDs (bit array)
-// 72 keys / 8 bits per byte = 9 bytes
-uint8_t threeLEDKeys[9] = {0};
+// LED configuration: stores LED count for each key (1, 2, or 3 LEDs)
+// Uses 2 bits per key: 00=2 LEDs (default), 01=1 LED, 10=3 LEDs
+// 72 keys * 2 bits = 144 bits = 18 bytes
+uint8_t ledCountConfig[18] = {0};
 
-bool isThreeLEDKey(int key) {
-  if (key < 0 || key >= 72) return false;
-  uint8_t byteIndex = key / 8;
-  uint8_t bitIndex = key % 8;
-  return (threeLEDKeys[byteIndex] & (1 << bitIndex)) != 0;
+uint8_t getLEDCount(int key) {
+  if (key < 0 || key >= 72) return 2;
+  uint8_t byteIndex = (key * 2) / 8;
+  uint8_t bitOffset = (key * 2) % 8;
+  uint8_t value = (ledCountConfig[byteIndex] >> bitOffset) & 0x03;
+  // 00 = 2 LEDs (default), 01 = 1 LED, 10 = 3 LEDs
+  if (value == 1) return 1;
+  if (value == 2) return 3;
+  return 2;
 }
 
-void setThreeLEDKey(int key, bool enabled) {
+void setLEDCount(int key, uint8_t count) {
   if (key < 0 || key >= 72) return;
-  uint8_t byteIndex = key / 8;
-  uint8_t bitIndex = key % 8;
-  if (enabled) {
-    threeLEDKeys[byteIndex] |= (1 << bitIndex);
-  } else {
-    threeLEDKeys[byteIndex] &= ~(1 << bitIndex);
-  }
+  if (count < 1 || count > 3) return;
+  
+  uint8_t byteIndex = (key * 2) / 8;
+  uint8_t bitOffset = (key * 2) % 8;
+  
+  // Convert count to 2-bit value: 1->01, 2->00, 3->10
+  uint8_t value;
+  if (count == 1) value = 1;
+  else if (count == 3) value = 2;
+  else value = 0;
+  
+  // Clear the 2 bits and set new value
+  uint8_t mask = ~(0x03 << bitOffset);
+  ledCountConfig[byteIndex] = (ledCountConfig[byteIndex] & mask) | (value << bitOffset);
+}
+
+void cycleLEDCount(int key) {
+  uint8_t current = getLEDCount(key);
+  uint8_t next = (current == 3) ? 1 : current + 1;
+  setLEDCount(key, next);
 }
 
 float keyBrightness[72] = {0}; // 0-99 for each key
@@ -118,8 +136,8 @@ void renderLEDs() {
   int whiteKeyCount = 0;
   
   while (led < LED_COUNT && key < 72) {
-    // Check if this key uses 3 LEDs, otherwise use 2
-    int ledsForThisKey = isThreeLEDKey(key) ? 3 : 2;
+    // Get LED count for this key (1, 2, or 3)
+    int ledsForThisKey = getLEDCount(key);
     float brightness = keyBrightness[key] / 99.0 * BRIGHTNESS;
     uint8_t noteInOctave = key % 12;
     uint32_t color = 0;
@@ -178,20 +196,20 @@ void loop() {
         } else if (flag == CLEAR_FLAG && count == 1) {
           sawClear = true;
           clearAllKeys();
-        } else if (flag == CONFIG_FLAG && count == 9) {
-          // Receive 9 bytes of LED configuration
+        } else if (flag == CONFIG_FLAG && count == 18) {
+          // Receive 18 bytes of LED configuration (2 bits per key)
           // Each triplet: CONFIG_FLAG, byte_index, byte_value
-          if (key < 9) {
-            threeLEDKeys[key] = val;
+          if (key < 18) {
+            ledCountConfig[key] = val;
           }
         } else if (flag == CONFIG_MODE_ENTER && count == 1) {
           enterConfigurationMode();
         } else if (flag == CONFIG_MODE_EXIT && count == 1) {
           exitConfigurationMode();
         } else if (flag == CONFIG_MODE_TOGGLE && count == 1) {
-          // Toggle 3-LED status for a key in config mode
+          // Cycle LED count for a key in config mode (1 -> 2 -> 3 -> 1)
           if (key < 72) {
-            setThreeLEDKey(key, !isThreeLEDKey(key));
+            cycleLEDCount(key);
             // Re-render to show the change
             renderLEDs();
           }
